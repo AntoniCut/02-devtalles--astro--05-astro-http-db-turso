@@ -33,6 +33,9 @@ jobs:
 
             - name: Build
               run: pnpm build
+              env:
+                  SITE: https://devtalles-antonydev-astro-05-astro-http-db-turso.antonicut.workers.dev
+                  BASE: /
 
             - name: Verify Cloudflare worker target
               run: node -e "const fs=require('fs'); const expected=JSON.parse(fs.readFileSync('wrangler.jsonc','utf8')).name; const built=require('./dist/server/wrangler.json').name; if(expected!==built){console.error('Worker mismatch. wrangler.jsonc:',expected,'build:',built);process.exit(1)}; console.log('Deploying to:',built)"

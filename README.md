@@ -53,12 +53,21 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), preparado para 
 
 ## Despliegue
 
-Worker de Cloudflare: `devtalles-antonydev-astro-05-astro-http-db-turso`
+- **Worker:** `devtalles-antonydev-astro-05-astro-http-db-turso`
+- **URL:** https://devtalles-antonydev-astro-05-astro-http-db-turso.antonicut.workers.dev
 
-Variables de entorno opcionales para `site` y `base`:
+Variables de entorno de producción (`.env.production`):
 
-- `SITE` — URL canónica del sitio (por defecto `https://example.com`)
-- `BASE` — subruta de despliegue (por defecto `/`)
+- `SITE` — URL canónica del sitio
+- `BASE` — subruta de despliegue (`/` para workers.dev)
+
+Despliegue manual:
+
+```bash
+pnpm deploy
+```
+
+Despliegue automático en push a `master` vía GitHub Actions (requiere `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en los secrets del repositorio).
 
 ## Astro DB + Turso (curso)
 
