@@ -1,0 +1,9 @@
+{
+    "name": "devtalles-antonydev-astro-05-astro-http-db-turso",
+    "kv_namespaces": [
+        {
+            "binding": "SESSION",
+            "id": "75e4b3f2ae6346118f62f543fbab6ee3"
+        }
+    ]
+}

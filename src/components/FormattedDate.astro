@@ -1,0 +1,24 @@
+---
+
+/*
+    *  --------------------------------------------------------------------------  *
+    *  -----  FormattedDate.astro  --  /src/components/FormattedDate.astro  -----  *
+    *  --------------------------------------------------------------------------  *
+ */
+
+interface Props {
+    /** - `fecha a formatear` */
+    date: Date;
+}
+
+const { date } = Astro.props;
+
+---
+
+<time datetime={date.toISOString()}>
+    {date.toLocaleDateString("en-us", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    })}
+</time>

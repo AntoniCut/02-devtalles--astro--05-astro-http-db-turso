@@ -1,0 +1,44 @@
+name: Deploy to Cloudflare Workers
+
+on:
+    push:
+        branches:
+            - master
+
+concurrency:
+    group: cloudflare-deploy-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 11
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build
+              run: pnpm build
+
+            - name: Verify Cloudflare worker target
+              run: node -e "const fs=require('fs'); const expected=JSON.parse(fs.readFileSync('wrangler.jsonc','utf8')).name; const built=require('./dist/server/wrangler.json').name; if(expected!==built){console.error('Worker mismatch. wrangler.jsonc:',expected,'build:',built);process.exit(1)}; console.log('Deploying to:',built)"
+
+            - name: Deploy to Cloudflare Workers
+              run: pnpm exec wrangler deploy
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

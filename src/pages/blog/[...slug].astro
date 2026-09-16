@@ -1,0 +1,36 @@
+---
+
+/*
+    *  ------------------------------------------------------------------  *
+    *  -----  [...slug].astro  --  /src/pages/blog/[...slug].astro  -----  *
+    *  ------------------------------------------------------------------  *
+ */
+
+import { getEntry, render } from "astro:content";
+import BlogPost from "@/src/layouts/BlogPost.astro";
+
+
+/** - `Deshabilita la prerenderización de la página`. */
+export const prerender = false;
+
+/** - `slug del post desde la URL` */
+const { slug } = Astro.params;
+
+if (slug === undefined) {
+    return Astro.redirect("/404");
+}
+
+/** - `post solicitado en la colección blog` */
+const post = await getEntry("blog", slug);
+
+if (post === undefined) {
+    return Astro.redirect("/404");
+}
+
+const { Content } = await render(post);
+
+---
+
+<BlogPost {...post.data}>
+    <Content />
+</BlogPost>

@@ -1,0 +1,254 @@
+---
+
+/*
+    *  ---------------------------------------------------  *
+    *  -----  api.astro  --  /src/pages/api.astro  -----  *
+    *  ---------------------------------------------------  *
+ */
+
+import BaseHead from "@/src/components/BaseHead.astro";
+import Footer from "@/src/components/Footer.astro";
+import Header from "@/src/components/Header.astro";
+import { API_USE_CASES } from "@/src/data/api-endpoints";
+import { SITE_TITLE } from "@/src/consts";
+
+
+/** - `título de la página de documentación api` */
+const pageTitle = `API — ${SITE_TITLE}`;
+
+/** - `descripción de la página de documentación api` */
+const pageDescription =
+    "Documentación de los endpoints HTTP del proyecto con todos los casos de uso.";
+
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <BaseHead title={pageTitle} description={pageDescription} />
+    </head>
+    <body>
+        <Header />
+
+        <main>
+            <header class="page-header">
+                <h1>API HTTP</h1>
+                <p>
+                    Referencia de endpoints del proyecto. Los GET estáticos se
+                    pueden probar desde los enlaces. Las mutaciones requieren
+                    Postman o curl con body JSON.
+                </p>
+            </header>
+
+            {API_USE_CASES.map((useCase) => (
+                <section class="use-case">
+                    <h2>{useCase.title}</h2>
+                    <p>{useCase.description}</p>
+
+                    <ul class="endpoint-list">
+                        {useCase.endpoints.map((endpoint) => (
+                            <li class="endpoint-card">
+                                <div class="endpoint-header">
+                                    <span
+                                        class={`method method-${endpoint.method.toLowerCase()}`}
+                                    >
+                                        {endpoint.method}
+                                    </span>
+                                    <span class="mode">
+                                        {endpoint.mode === "static"
+                                            ? "estático"
+                                            : "SSR"}
+                                    </span>
+                                </div>
+
+                                <h3>{endpoint.title}</h3>
+                                <p>{endpoint.description}</p>
+
+                                {endpoint.method === "GET" &&
+                                endpoint.relatedLinks &&
+                                endpoint.relatedLinks.length > 0 ? (
+                                    <>
+                                        <p>
+                                            <code>{endpoint.path}</code>
+                                        </p>
+                                        <ul class="related-links">
+                                            {endpoint.relatedLinks.map(
+                                                (link) => (
+                                                    <li>
+                                                        <a href={link.path}>
+                                                            {link.label}
+                                                        </a>
+                                                    </li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    </>
+                                ) : endpoint.method === "GET" ? (
+                                    <p>
+                                        <a href={endpoint.path}>
+                                            {endpoint.path}
+                                        </a>
+                                    </p>
+                                ) : (
+                                    <p>
+                                        <code>{endpoint.path}</code>
+                                    </p>
+                                )}
+
+                                {endpoint.bodyExample && (
+                                    <figure>
+                                        <figcaption>Body JSON</figcaption>
+                                        <pre><code>{endpoint.bodyExample}</code></pre>
+                                    </figure>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            ))}
+        </main>
+
+        <Footer />
+    </body>
+</html>
+
+<style>
+    main {
+        width: min(960px, 100%);
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem;
+    }
+
+    .page-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .page-header p {
+        color: rgb(var(--gray));
+        max-width: 42rem;
+    }
+
+    .use-case {
+        margin-bottom: 3rem;
+    }
+
+    .use-case h2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .use-case > p {
+        color: rgb(var(--gray));
+        margin-bottom: 1.25rem;
+    }
+
+    .endpoint-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+    }
+
+    .endpoint-card {
+        border: 1px solid rgba(var(--gray), 25%);
+        border-radius: 12px;
+        padding: 1.25rem;
+        background: white;
+    }
+
+    .endpoint-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .method {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .method-get {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .method-post {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .method-put {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .method-patch {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .method-delete {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .mode {
+        font-size: 0.8rem;
+        color: rgb(var(--gray));
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .endpoint-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .endpoint-card p {
+        margin: 0 0 0.75rem;
+    }
+
+    .endpoint-card a {
+        word-break: break-all;
+    }
+
+    .related-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .related-links a {
+        font-size: 0.95rem;
+    }
+
+    figure {
+        margin: 0;
+    }
+
+    figcaption {
+        font-size: 0.85rem;
+        color: rgb(var(--gray));
+        margin-bottom: 0.35rem;
+    }
+
+    pre {
+        margin: 0;
+        padding: 1rem;
+        border-radius: 8px;
+        background: rgb(var(--gray-light));
+        overflow-x: auto;
+    }
+
+    code {
+        font-size: 0.9rem;
+    }
+</style>

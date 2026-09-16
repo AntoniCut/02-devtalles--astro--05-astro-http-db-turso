@@ -1,0 +1,63 @@
+{
+    "Astro GET APIRoute": {
+        "scope": "typescript,typescriptreact,javascript,javascriptreact",
+        "prefix": "getapi",
+        "body": [
+            "import type { APIRoute } from \"astro\";",
+            "",
+            "export const GET: APIRoute = async ({ params, request }) => {",
+            "    $0",
+            "    return new Response(JSON.stringify(${1:data}), {",
+            "        headers: { \"Content-Type\": \"application/json\" },",
+            "    });",
+            "};"
+        ],
+        "description": "Astro GET API endpoint"
+    },
+    "Astro POST APIRoute": {
+        "scope": "typescript,typescriptreact,javascript,javascriptreact",
+        "prefix": "postapi",
+        "body": [
+            "import type { APIRoute } from \"astro\";",
+            "",
+            "export const POST: APIRoute = async ({ params, request }) => {",
+            "    const body = await request.json();",
+            "    $0",
+            "    return new Response(JSON.stringify(${1:body}), {",
+            "        status: 201,",
+            "        headers: { \"Content-Type\": \"application/json\" },",
+            "    });",
+            "};"
+        ],
+        "description": "Astro POST API endpoint"
+    },
+    "Astro PUT APIRoute": {
+        "scope": "typescript,typescriptreact,javascript,javascriptreact",
+        "prefix": "putapi",
+        "body": [
+            "import type { APIRoute } from \"astro\";",
+            "",
+            "export const PUT: APIRoute = async ({ params, request }) => {",
+            "    const body = await request.json();",
+            "    $0",
+            "    return new Response(JSON.stringify(${1:body}), {",
+            "        headers: { \"Content-Type\": \"application/json\" },",
+            "    });",
+            "};"
+        ],
+        "description": "Astro PUT API endpoint"
+    },
+    "Astro DELETE APIRoute": {
+        "scope": "typescript,typescriptreact,javascript,javascriptreact",
+        "prefix": "deleteapi",
+        "body": [
+            "import type { APIRoute } from \"astro\";",
+            "",
+            "export const DELETE: APIRoute = async ({ params, request }) => {",
+            "    $0",
+            "    return new Response(null, { status: 204 });",
+            "};"
+        ],
+        "description": "Astro DELETE API endpoint"
+    }
+}

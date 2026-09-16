@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "noEmit": true,
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "strict": false,
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./*"]
+        }
+    },
+    "include": [
+        "src/**/*.js",
+        "astro.config.mjs",
+        "src/interfaces/**/*.d.js",
+        "src/interfaces/**/*.d.ts"
+    ],
+    "exclude": ["node_modules", "dist"]
+}
