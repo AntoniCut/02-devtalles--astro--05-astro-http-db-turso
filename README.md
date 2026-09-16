@@ -1,43 +1,93 @@
-# Astro Starter Kit: Minimal
+# 05-astro-http-db-turso
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), preparado para el curso de **Astro DB** y **Turso**.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- **Astro** 6.4.x (requerido para `@astrojs/db`)
+- **Adapter:** Cloudflare Workers (`@astrojs/cloudflare`)
+- **Contenido:** Markdown, MDX, Content Collections, RSS, sitemap
+- **Despliegue:** Wrangler + GitHub Actions
 
-Inside of your Astro project, you'll see the following folders and files:
+> El proyecto original [05-astro-http](../05-astro-http/) usa **Astro 7**, donde `@astrojs/db` ya no está disponible. Este clon mantiene la misma funcionalidad en Astro 6 para seguir el curso.
+
+## Características
+
+- Blog con posts en `src/content/blog/`
+- APIs JSON estáticas en `/api/posts/*`
+- `ClientRouter` para transiciones de vista
+- Alias `@/*` en TypeScript
+- Formateo con Prettier + `prettier-plugin-astro`
+
+## Estructura
 
 ```text
-/
 ├── public/
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── assets/
+│   ├── components/
+│   ├── content/
+│   ├── data/
+│   ├── interfaces/
+│   ├── layouts/
+│   ├── pages/
+│   │   └── api/
+│   └── styles/
+├── scripts/
+├── astro.config.mjs
+├── wrangler.jsonc
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Comandos
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| Comando              | Acción                                              |
+| :------------------- | :-------------------------------------------------- |
+| `pnpm install`       | Instala dependencias                                |
+| `pnpm dev`           | Servidor de desarrollo en `http://localhost:4321` |
+| `pnpm build`         | Build de producción en `./dist/`                    |
+| `pnpm preview`       | Preview local en `http://localhost:4322`            |
+| `pnpm deploy`        | Build + despliegue a Cloudflare Workers             |
+| `pnpm format`        | Formatea código con Prettier                        |
+| `pnpm format:check`  | Comprueba formato sin modificar archivos            |
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Despliegue
 
-## 🧞 Commands
+Worker de Cloudflare: `devtalles-antonydev-astro-05-astro-http-db-turso`
 
-All commands are run from the root of the project, from a terminal:
+Variables de entorno opcionales para `site` y `base`:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+- `SITE` — URL canónica del sitio (por defecto `https://example.com`)
+- `BASE` — subruta de despliegue (por defecto `/`)
 
-## 👀 Want to learn more?
+## Astro DB + Turso (curso)
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Este proyecto está preparado para añadir la base de datos cuando empieces el módulo correspondiente:
+
+```bash
+pnpm astro add db
+```
+
+Crea un archivo `.env` en la raíz con las credenciales de Turso:
+
+```env
+ASTRO_DB_REMOTE_URL=
+ASTRO_DB_APP_TOKEN=
+```
+
+Comandos habituales del curso:
+
+```bash
+pnpm astro db push
+pnpm astro db seed
+pnpm astro build --remote
+```
+
+## Requisitos
+
+- Node.js >= 22.12.0
+- pnpm
+
+## Créditos
+
+Tema basado en [Bear Blog](https://github.com/HermanMartinus/bearblog/).
