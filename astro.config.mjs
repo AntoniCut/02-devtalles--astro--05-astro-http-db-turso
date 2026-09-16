@@ -10,27 +10,26 @@
 // @ts-check
 
 import cloudflare from "@astrojs/cloudflare";
+import db from "@astrojs/db";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 
 
-
 const site = process.env.SITE ?? "https://example.com";
 const base = process.env.BASE ?? "/";
 
-
-/**  
+/**
  * ------------------------------
  * -----  `defineConfig()`  -----
  * ------------------------------
  * Definir la configuración principal de Astro.
-*/
+ */
 export default defineConfig({
     
     site,
     base,
-    integrations: [mdx(), sitemap()],
+    integrations: [mdx(), sitemap(), db()],
 
     //output: "server",
 

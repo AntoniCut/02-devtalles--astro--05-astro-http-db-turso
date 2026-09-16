@@ -1,10 +1,11 @@
 # 05-astro-http-db-turso
 
-Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), preparado para el curso de **Astro DB** y **Turso**.
+Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB** y **Turso** para el curso.
 
 ## Stack
 
 - **Astro** 6.4.x (requerido para `@astrojs/db`)
+- **Base de datos:** `@astrojs/db` + libSQL / Turso
 - **Adapter:** Cloudflare Workers (`@astrojs/cloudflare`)
 - **Contenido:** Markdown, MDX, Content Collections, RSS, sitemap
 - **Despliegue:** Wrangler + GitHub Actions
@@ -18,10 +19,14 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), preparado para 
 - `ClientRouter` para transiciones de vista
 - Alias `@/*` en TypeScript
 - Formateo con Prettier + `prettier-plugin-astro`
+- Astro DB instalado (`@astrojs/db`)
 
 ## Estructura
 
 ```text
+├── db/
+│   ├── config.ts       # Esquema de tablas
+│   └── seed.dev.ts     # Datos iniciales (seed manual)
 ├── public/
 ├── src/
 │   ├── assets/
@@ -46,10 +51,57 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), preparado para 
 | `pnpm install`       | Instala dependencias                                |
 | `pnpm dev`           | Servidor de desarrollo en `http://localhost:4321` |
 | `pnpm build`         | Build de producción en `./dist/`                    |
+| `pnpm build:remote`  | Build conectado a Turso (`--remote`)                |
 | `pnpm preview`       | Preview local en `http://localhost:4322`            |
 | `pnpm deploy`        | Build + despliegue a Cloudflare Workers             |
+| `pnpm db:push`       | Sincroniza el esquema de tablas con la BD local     |
+| `pnpm db:seed`       | Inserta datos de prueba desde `db/seed.dev.ts`      |
 | `pnpm format`        | Formatea código con Prettier                        |
 | `pnpm format:check`  | Comprueba formato sin modificar archivos            |
+
+## Astro DB + Turso
+
+### Instalación
+
+Astro DB ya está instalado en este proyecto. Si partieras de cero:
+
+```bash
+pnpm astro add db --yes
+```
+
+### Variables de entorno
+
+Crea un archivo `.env` en la raíz con las credenciales de Turso:
+
+```env
+ASTRO_DB_REMOTE_URL=
+ASTRO_DB_APP_TOKEN=
+```
+
+No uses el prefijo `PUBLIC_` en estas variables.
+
+### Flujo de desarrollo
+
+1. Define tablas en `db/config.ts`
+2. Aplica el esquema: `pnpm db:push`
+3. (Opcional) Carga datos de prueba: `pnpm db:seed`
+4. Arranca el servidor: `pnpm dev`
+
+Para producción con Turso:
+
+```bash
+pnpm astro db push --remote
+pnpm db:seed -- --remote
+pnpm build:remote
+```
+
+### Seed manual (Astro 6.4)
+
+`@astrojs/db` está deprecado en Astro 6.4. Si existe un archivo `db/seed.ts`, Astro DB intenta ejecutarlo al arrancar `pnpm dev` y falla por incompatibilidad con Vite 7.
+
+**Solución adoptada en este proyecto:** el seed vive en `db/seed.dev.ts` y se ejecuta manualmente con `pnpm db:seed`. No renombres ese archivo a `seed.ts`.
+
+Documentación de referencia (Astro 5): https://v5.docs.astro.build/en/guides/astro-db/
 
 ## Despliegue
 
@@ -68,29 +120,6 @@ pnpm deploy
 ```
 
 Despliegue automático en push a `master` vía GitHub Actions (requiere `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en los secrets del repositorio).
-
-## Astro DB + Turso (curso)
-
-Este proyecto está preparado para añadir la base de datos cuando empieces el módulo correspondiente:
-
-```bash
-pnpm astro add db
-```
-
-Crea un archivo `.env` en la raíz con las credenciales de Turso:
-
-```env
-ASTRO_DB_REMOTE_URL=
-ASTRO_DB_APP_TOKEN=
-```
-
-Comandos habituales del curso:
-
-```bash
-pnpm astro db push
-pnpm astro db seed
-pnpm astro build --remote
-```
 
 ## Requisitos
 

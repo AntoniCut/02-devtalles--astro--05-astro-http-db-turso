@@ -11,11 +11,15 @@
         "deploy": "pnpm build && wrangler deploy",
         "preview": "astro preview --port 4322 --open",
         "astro": "astro",
+        "db:push": "astro db push",
+        "db:seed": "astro db execute db/seed.dev.ts",
+        "build:remote": "astro build --remote",
         "format": "prettier --write \"**/*.{js,ts,astro,mjs}\" && node scripts/post-prettier-style.mjs",
         "format:check": "prettier --check \"**/*.{js,ts,astro,mjs}\""
     },
     "dependencies": {
         "@astrojs/cloudflare": "^13.7.0",
+        "@astrojs/db": "^0.21.3",
         "@astrojs/mdx": "^6.0.3",
         "@astrojs/rss": "^4.0.19",
         "@astrojs/sitemap": "^3.7.4",
