@@ -27,6 +27,8 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 ├── db/
 │   ├── config.ts       # Esquema de tablas
 │   └── seed.dev.ts     # Datos iniciales (seed manual)
+├── patches/
+│   └── @astrojs__db@0.21.3.patch   # Fix build remoto + Cloudflare
 ├── public/
 ├── src/
 │   ├── assets/
@@ -40,6 +42,7 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 │   └── styles/
 ├── scripts/
 ├── astro.config.mjs
+├── pnpm-workspace.yaml # patchedDependencies de @astrojs/db
 ├── wrangler.jsonc
 └── package.json
 ```
@@ -69,16 +72,30 @@ Astro DB ya está instalado en este proyecto. Si partieras de cero:
 pnpm astro add db --yes
 ```
 
+### Turso (base remota)
+
+La base de datos vive en [Turso Cloud](https://app.turso.tech) (no en tu máquina). Crea la base desde el panel web o con la CLI de Turso y obtén:
+
+- **Database URL** — formato `libsql://nombre-db-usuario.region.turso.io`
+- **Token** — desde **Create Token** en el panel de la base
+
 ### Variables de entorno
 
-Crea un archivo `.env` en la raíz con las credenciales de Turso:
+| Archivo | Uso |
+| :------ | :-- |
+| `.env` | Comandos locales con Turso: `db push --remote`, `build:remote`, `deploy` |
+| `.env.production` | Build de producción: `SITE`, `BASE` y credenciales Turso |
+
+Ejemplo de `.env`:
 
 ```env
-ASTRO_DB_REMOTE_URL=
-ASTRO_DB_APP_TOKEN=
+ASTRO_DB_REMOTE_URL=libsql://tu-base-usuario.region.turso.io
+ASTRO_DB_APP_TOKEN=tu-token-aqui
 ```
 
 No uses el prefijo `PUBLIC_` en estas variables.
+
+> Los comandos `pnpm db:push` y `pnpm dev` usan una SQLite **local** y no necesitan Turso. Solo los comandos con `--remote` o `build:remote` requieren `.env`.
 
 ### Flujo de desarrollo
 
@@ -103,6 +120,17 @@ pnpm build:remote
 
 Documentación de referencia (Astro 5): https://v5.docs.astro.build/en/guides/astro-db/
 
+### Parche `@astrojs/db` + Cloudflare
+
+`astro build --remote` falla con `@astrojs/cloudflare` en `@astrojs/db@0.21.3` con el error `Invalid URL string` ([issue #16738](https://github.com/withastro/astro/issues/16738)). No es un problema de credenciales: `db push --remote` puede funcionar mientras el build remoto falla.
+
+Este proyecto aplica el fix oficial ([PR #16939](https://github.com/withastro/astro/pull/16939)) mediante `pnpm patch`:
+
+- `patches/@astrojs__db@0.21.3.patch`
+- `pnpm-workspace.yaml` → `patchedDependencies`
+
+Tras `pnpm install`, el parche se aplica automáticamente. Cuando `@astrojs/db` publique una versión con el fix, elimina el parche y actualiza la dependencia.
+
 ## Despliegue
 
 - **Worker:** `devtalles-antonydev-astro-05-astro-http-db-turso`
@@ -112,6 +140,7 @@ Variables de entorno de producción (`.env.production`):
 
 - `SITE` — URL canónica del sitio
 - `BASE` — subruta de despliegue (`/` para workers.dev)
+- `ASTRO_DB_REMOTE_URL` y `ASTRO_DB_APP_TOKEN` — credenciales Turso (también en `.env` para pruebas locales)
 
 Despliegue manual:
 
@@ -119,16 +148,26 @@ Despliegue manual:
 pnpm deploy
 ```
 
-Despliegue automático en push a `master` vía GitHub Actions. Secrets requeridos en el repositorio:
+Despliegue automático en push a `master` vía GitHub Actions (`.github/workflows/deploy.yml`):
+
+1. `pnpm install --frozen-lockfile` (aplica el parche de `@astrojs/db`)
+2. `pnpm build:remote` con credenciales Turso
+3. `wrangler deploy`
+
+Secrets requeridos en el repositorio:
 
 | Secret | Uso |
 | :----- | :-- |
 | `CLOUDFLARE_API_TOKEN` | Despliegue a Cloudflare Workers |
 | `CLOUDFLARE_ACCOUNT_ID` | Cuenta de Cloudflare |
-| `ASTRO_DB_REMOTE_URL` | URL de la base Turso |
+| `ASTRO_DB_REMOTE_URL` | URL `libsql://...` de la base Turso |
 | `ASTRO_DB_APP_TOKEN` | Token de acceso a Turso |
 
-> Con Astro DB + Cloudflare, el build de CI usa `pnpm build:remote` y necesita las credenciales de Turso. Sin ellas, el workflow falla en el paso **Build**.
+Antes del primer deploy, sincroniza el esquema remoto:
+
+```bash
+pnpm astro db push --remote
+```
 
 ## Requisitos
 
