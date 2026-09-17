@@ -4,11 +4,10 @@
     *  ---------------------------------------------------------------------  *
  */
 
-import type { ApiUseCase } from "@/src/interfaces/types";
+import type { ApiSection, ApiUseCase } from "@/src/interfaces/types";
 
-
-/** - `casos de uso de la api del proyecto` */
-export const API_USE_CASES: ApiUseCase[] = [
+/** - `casos de uso de la api de posts` */
+export const POSTS_USE_CASES: ApiUseCase[] = [
     {
         title: "01 — Lectura (GET estático)",
         description:
@@ -47,10 +46,10 @@ export const API_USE_CASES: ApiUseCase[] = [
             },
         ],
     },
+
     {
         title: "02 — Creación (POST SSR)",
-        description:
-            "Requiere servidor Node en runtime. Prueba con Postman o curl.",
+        description: "Requiere servidor en runtime. Prueba con Postman o curl.",
         endpoints: [
             {
                 method: "POST",
@@ -59,13 +58,15 @@ export const API_USE_CASES: ApiUseCase[] = [
                 description:
                     "Simula la creación de un post (demo, sin persistencia).",
                 mode: "ssr",
-                bodyExample: `{
-  "title": "Nuevo post",
-  "description": "Descripción de prueba"
-}`,
+                bodyExample: `
+                    {
+                        "title": "Nuevo post",
+                        "description": "Descripción de prueba"
+                    }`,
             },
         ],
     },
+
     {
         title: "03 — Actualización (PUT / PATCH SSR)",
         description: "Actualiza un post existente por slug en la URL.",
@@ -76,10 +77,11 @@ export const API_USE_CASES: ApiUseCase[] = [
                 title: "Actualizar post completo (PUT)",
                 description: "Reemplaza los campos enviados en el body.",
                 mode: "ssr",
-                bodyExample: `{
-  "title": "Título actualizado",
-  "description": "Descripción actualizada"
-}`,
+                bodyExample: `
+                    {
+                        "title": "Título actualizado",
+                        "description": "Descripción actualizada"
+                    }`,
             },
             {
                 method: "PATCH",
@@ -87,12 +89,14 @@ export const API_USE_CASES: ApiUseCase[] = [
                 title: "Actualizar post parcial (PATCH)",
                 description: "Actualiza solo los campos enviados en el body.",
                 mode: "ssr",
-                bodyExample: `{
-  "description": "Solo cambio la descripción"
-}`,
+                bodyExample: `
+                    {
+                        "description": "Solo cambio la descripción"
+                    }`,
             },
         ],
     },
+
     {
         title: "04 — Eliminación (DELETE SSR)",
         description: "Simula el borrado de un post por slug.",
@@ -105,5 +109,120 @@ export const API_USE_CASES: ApiUseCase[] = [
                 mode: "ssr",
             },
         ],
+    },
+];
+
+/** - `casos de uso de la api de clients` */
+export const CLIENTS_USE_CASES: ApiUseCase[] = [
+    {
+        title: "01 — Lectura (GET SSR + Astro DB)",
+        description:
+            "Lectura real sobre la tabla Clients. Requiere servidor en runtime.",
+        endpoints: [
+            {
+                method: "GET",
+                path: "/api/clients/list",
+                title: "Listar clientes",
+                description:
+                    "Devuelve todos los registros de la tabla Clients.",
+                mode: "ssr",
+            },
+            {
+                method: "GET",
+                path: "/api/clients/:id",
+                title: "Obtener cliente por id",
+                description: "Devuelve un cliente concreto por su id numérico.",
+                mode: "ssr",
+                relatedLinks: [
+                    { label: "cliente 1", path: "/api/clients/1" },
+                    { label: "cliente 2", path: "/api/clients/2" },
+                    { label: "cliente 3", path: "/api/clients/3" },
+                ],
+            },
+        ],
+    },
+
+    {
+        title: "02 — Creación (POST SSR + Astro DB)",
+        description: "Inserta un cliente en Turso. Prueba con Postman o curl.",
+        endpoints: [
+            {
+                method: "POST",
+                path: "/api/clients/mutate",
+                title: "Crear cliente",
+                description: "Inserta un nuevo cliente en Astro DB.",
+                mode: "ssr",
+                bodyExample: `
+                    {
+                        "name": "Laura Martínez",
+                        "age": 29,
+                        "isActive": true
+                    }`,
+            },
+        ],
+    },
+
+    {
+        title: "03 — Actualización (PUT / PATCH SSR + Astro DB)",
+        description: "Actualiza un cliente existente por id en la URL.",
+        endpoints: [
+            {
+                method: "PUT",
+                path: "/api/clients/mutations/1",
+                title: "Reemplazar cliente (PUT)",
+                description: "Actualiza todos los campos del cliente indicado.",
+                mode: "ssr",
+                bodyExample: `
+                    {
+                        "name": "Laura Martínez",
+                        "age": 30,
+                        "isActive": false
+                    }`,
+            },
+            {
+                method: "PATCH",
+                path: "/api/clients/mutations/1",
+                title: "Actualizar cliente parcial (PATCH)",
+                description: "Actualiza solo los campos enviados en el body.",
+                mode: "ssr",
+                bodyExample: `
+                    {
+                        "isActive": true
+                    }`,
+            },
+        ],
+    },
+
+    {
+        title: "04 — Eliminación (DELETE SSR + Astro DB)",
+        description: "Borra un cliente por id en la base de datos.",
+        endpoints: [
+            {
+                method: "DELETE",
+                path: "/api/clients/mutations/1",
+                title: "Eliminar cliente",
+                description: "No requiere body. El id va en la URL.",
+                mode: "ssr",
+            },
+        ],
+    },
+];
+
+/** - `secciones principales de la documentación api` */
+export const API_SECTIONS: ApiSection[] = [
+    {
+        id: "posts",
+        title: "Posts",
+        description:
+            "Endpoints del blog basados en content collections. Lectura estática y mutaciones de demo sin persistencia.",
+        useCases: POSTS_USE_CASES,
+    },
+
+    {
+        id: "clients",
+        title: "Clients",
+        description:
+            "CRUD real sobre la tabla Clients con Astro DB y Turso. Todas las rutas requieren servidor en runtime.",
+        useCases: CLIENTS_USE_CASES,
     },
 ];

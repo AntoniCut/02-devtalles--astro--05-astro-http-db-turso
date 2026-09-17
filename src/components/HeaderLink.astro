@@ -16,11 +16,19 @@ const { href, class: className, ...props } = Astro.props;
 
 //  -----  calcular si la ruta está activa  -----
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
+const hash = Astro.url.hash;
 const subpath = pathname.match(/[^\/]+/g);
+const hrefString = typeof href === "string" ? href : "";
+const isHashLink = hrefString.includes("#");
 const isActive =
     href === pathname ||
     (href !== "/" && pathname.startsWith(`${href}/`)) ||
-    href === "/" + (subpath?.[0] || "");
+    href === "/" + (subpath?.[0] || "") ||
+    (isHashLink && `${pathname}${hash}` === hrefString) ||
+    (!isHashLink &&
+        hrefString === "/api" &&
+        pathname === "/api" &&
+        hash === "");
 
 ---
 

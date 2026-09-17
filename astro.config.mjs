@@ -26,7 +26,6 @@ const base = process.env.BASE ?? "/";
  * Definir la configuración principal de Astro.
  */
 export default defineConfig({
-    
     site,
     base,
     integrations: [mdx(), sitemap(), db({ mode: "web" })],

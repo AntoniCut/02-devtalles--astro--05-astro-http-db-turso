@@ -4,15 +4,18 @@
     "version": "0.0.1",
     "engines": {
         "node": ">=22.12.0"
+        
     },
     "scripts": {
-        "dev": "astro dev --port 4321 --open",
+        "dev": "astro dev --remote --port 4321 --open",
+        "dev:local": "astro dev --port 4321 --open",
+        "db:seed:local": "astro db execute db/seed.dev.ts",
         "build": "astro build",
         "deploy": "pnpm build:remote && wrangler deploy",
         "preview": "astro preview --port 4322 --open",
         "astro": "astro",
-        "db:push": "astro db push",
-        "db:seed": "astro db execute db/seed.dev.ts",
+        "db:push": "astro db push --remote",
+        "db:seed": "astro db execute db/seed.dev.ts --remote",
         "build:remote": "astro build --remote",
         "format": "prettier --write \"**/*.{js,ts,astro,mjs}\" && node scripts/post-prettier-style.mjs",
         "format:check": "prettier --check \"**/*.{js,ts,astro,mjs}\""
@@ -33,6 +36,7 @@
     },
     "devDependencies": {
         "prettier": "^3.9.6",
-        "prettier-plugin-astro": "^1.0.0"
+        "prettier-plugin-astro": "^1.0.0",
+        "typescript": "^5.8.3"
     }
 }

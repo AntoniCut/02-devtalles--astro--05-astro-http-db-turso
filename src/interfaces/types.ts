@@ -21,6 +21,28 @@ export interface Person {
     age: number;
 }
 
+/** - `cliente almacenado en astro db` */
+export interface Client {
+    id: number;
+    name: string;
+    age: number;
+    isActive: boolean;
+}
+
+/** - `datos requeridos para crear o reemplazar un cliente` */
+export interface ClientInput {
+    name: string;
+    age: number;
+    isActive: boolean;
+}
+
+/** - `datos opcionales para actualizar un cliente parcialmente` */
+export interface ClientPatchInput {
+    name?: string;
+    age?: number;
+    isActive?: boolean;
+}
+
 /** - `métodos http soportados en la api` */
 export type ApiHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -49,4 +71,12 @@ export interface ApiUseCase {
     title: string;
     description: string;
     endpoints: ApiEndpoint[];
+}
+
+/** - `sección principal de la documentación api (posts, clients, etc.)` */
+export interface ApiSection {
+    id: string;
+    title: string;
+    description: string;
+    useCases: ApiUseCase[];
 }
