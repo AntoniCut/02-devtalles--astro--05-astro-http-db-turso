@@ -2,3 +2,5 @@ allowBuilds:
   esbuild: true
   sharp: true
   workerd: true
+patchedDependencies:
+  '@astrojs/db@0.21.3': patches/@astrojs__db@0.21.3.patch

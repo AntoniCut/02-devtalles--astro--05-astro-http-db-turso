@@ -1,0 +1,37 @@
+diff --git a/dist/core/integration/index.js b/dist/core/integration/index.js
+index 2cd02f5993a25b7c3e09cdcb487bfb9f5f621892..5e3bc5d6857b99b598c96336e25e44838170f24e 100644
+--- a/dist/core/integration/index.js
++++ b/dist/core/integration/index.js
+@@ -193,14 +193,26 @@ async function executeSeedFile({
+     throw e;
+   }
+ }
++function filterPluginsForTempServer(plugins) {
++  return (plugins ?? []).flat().filter((plugin) => {
++    if (plugin && typeof plugin === "object" && "name" in plugin && typeof plugin.name === "string") {
++      if (plugin.name.startsWith("vite-plugin-cloudflare")) return false;
++    }
++    return true;
++  });
++}
+ async function getTempViteServer({ viteConfig }) {
++  const filteredPlugins = filterPluginsForTempServer(viteConfig.plugins);
+   const tempViteServer = await createServer(
+-    mergeConfig(viteConfig, {
+-      server: { middlewareMode: true, hmr: false, watch: null, ws: false },
+-      optimizeDeps: { noDiscovery: true },
+-      ssr: { external: [] },
+-      logLevel: "silent"
+-    })
++    mergeConfig(
++      { ...viteConfig, plugins: filteredPlugins },
++      {
++        server: { middlewareMode: true, hmr: false, watch: null, ws: false },
++        optimizeDeps: { noDiscovery: true },
++        ssr: { external: [] },
++        logLevel: "silent"
++      }
++    )
+   );
+   const hotSend = tempViteServer.environments.client.hot.send;
+   tempViteServer.environments.client.hot.send = (payload) => {

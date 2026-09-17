@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@astrojs/db@0.21.3': f32a72a0d3a6d77228e0b8f85b2366ce2ee4dc02aa3a6c272471fbae0645351c
+
 importers:
 
   .:
@@ -13,7 +16,7 @@ importers:
         version: 13.7.0(@types/node@24.13.4)(astro@6.4.8(@types/node@24.13.4)(lightningcss@1.33.0)(rollup@4.63.3)(supports-color@10.2.2))(lightningcss@1.33.0)(wrangler@4.132.0(@types/node@24.13.4))
       '@astrojs/db':
         specifier: ^0.21.3
-        version: 0.21.3
+        version: 0.21.3(patch_hash=f32a72a0d3a6d77228e0b8f85b2366ce2ee4dc02aa3a6c272471fbae0645351c)
       '@astrojs/mdx':
         specifier: ^6.0.3
         version: 6.0.3(astro@6.4.8(@types/node@24.13.4)(lightningcss@1.33.0)(rollup@4.63.3)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -2767,7 +2770,7 @@ snapshots:
 
   '@astrojs/compiler@4.0.0': {}
 
-  '@astrojs/db@0.21.3':
+  '@astrojs/db@0.21.3(patch_hash=f32a72a0d3a6d77228e0b8f85b2366ce2ee4dc02aa3a6c272471fbae0645351c)':
     dependencies:
       '@clack/prompts': 1.8.1
       '@libsql/client': 0.17.4
