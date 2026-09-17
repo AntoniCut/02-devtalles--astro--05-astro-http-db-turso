@@ -8,7 +8,7 @@
     "scripts": {
         "dev": "astro dev --port 4321 --open",
         "build": "astro build",
-        "deploy": "pnpm build && wrangler deploy",
+        "deploy": "pnpm build:remote && wrangler deploy",
         "preview": "astro preview --port 4322 --open",
         "astro": "astro",
         "db:push": "astro db push",

@@ -119,7 +119,16 @@ Despliegue manual:
 pnpm deploy
 ```
 
-Despliegue automático en push a `master` vía GitHub Actions (requiere `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en los secrets del repositorio).
+Despliegue automático en push a `master` vía GitHub Actions. Secrets requeridos en el repositorio:
+
+| Secret | Uso |
+| :----- | :-- |
+| `CLOUDFLARE_API_TOKEN` | Despliegue a Cloudflare Workers |
+| `CLOUDFLARE_ACCOUNT_ID` | Cuenta de Cloudflare |
+| `ASTRO_DB_REMOTE_URL` | URL de la base Turso |
+| `ASTRO_DB_APP_TOKEN` | Token de acceso a Turso |
+
+> Con Astro DB + Cloudflare, el build de CI usa `pnpm build:remote` y necesita las credenciales de Turso. Sin ellas, el workflow falla en el paso **Build**.
 
 ## Requisitos
 

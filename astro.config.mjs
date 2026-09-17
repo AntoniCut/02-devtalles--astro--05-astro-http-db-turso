@@ -29,7 +29,7 @@ export default defineConfig({
     
     site,
     base,
-    integrations: [mdx(), sitemap(), db()],
+    integrations: [mdx(), sitemap(), db({ mode: "web" })],
 
     //output: "server",
 

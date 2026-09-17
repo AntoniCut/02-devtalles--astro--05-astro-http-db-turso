@@ -32,10 +32,12 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Build
-              run: pnpm build
+              run: pnpm build:remote
               env:
                   SITE: https://devtalles-antonydev-astro-05-astro-http-db-turso.antonicut.workers.dev
                   BASE: /
+                  ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
+                  ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
 
             - name: Verify Cloudflare worker target
               run: node -e "const fs=require('fs'); const expected=JSON.parse(fs.readFileSync('wrangler.jsonc','utf8')).name; const built=require('./dist/server/wrangler.json').name; if(expected!==built){console.error('Worker mismatch. wrangler.jsonc:',expected,'build:',built);process.exit(1)}; console.log('Deploying to:',built)"

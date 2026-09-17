@@ -32,6 +32,17 @@ Do **not** create `db/seed.ts`. Astro DB auto-runs that filename on `dev` startu
 
 Remote Turso commands append `--remote` (e.g. `pnpm astro db push --remote`).
 
+### CI / deploy
+
+GitHub Actions runs `pnpm build:remote` (not `pnpm build`). Cloudflare builds require Turso credentials:
+
+- `ASTRO_DB_REMOTE_URL`
+- `ASTRO_DB_APP_TOKEN`
+
+These must be set as GitHub repository secrets alongside `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+`db()` uses `mode: "web"` in `astro.config.mjs` for Cloudflare compatibility.
+
 Turso env vars in `.env`:
 
 ```env
