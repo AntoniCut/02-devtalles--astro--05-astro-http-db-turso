@@ -137,6 +137,8 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
                     { label: "cliente 1", path: "/api/clients/1" },
                     { label: "cliente 2", path: "/api/clients/2" },
                     { label: "cliente 3", path: "/api/clients/3" },
+                    { label: "cliente 4", path: "/api/clients/4" },
+                    { label: "cliente 5", path: "/api/clients/5" },
                 ],
             },
         ],
