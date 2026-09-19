@@ -1,0 +1,201 @@
+{
+    "info": {
+        "_postman_id": "b2c3d4e5-posts-05-astro-http-db-turso",
+        "name": "05-astro-http-db-turso — Posts",
+        "description": "API de posts (contenido del blog + mutaciones demo sin persistencia).\n\nLectura: GET estático/prerender. Creación/actualización/eliminación: requieren `pnpm dev`.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:4321"
+        },
+        {
+            "key": "postSlug",
+            "value": "first-post"
+        }
+    ],
+    "item": [
+        {
+            "name": "01 — Lectura",
+            "item": [
+                {
+                    "name": "Listar posts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/list",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "list"]
+                        },
+                        "description": "Devuelve la colección completa del blog en JSON."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener post por slug",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/{{postSlug}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "{{postSlug}}"]
+                        },
+                        "description": "Devuelve un post concreto por slug (p. ej. first-post, second-post)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get person (demo)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/get-person.json",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "get-person.json"]
+                        },
+                        "description": "Endpoint de ejemplo con datos de una persona."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "02 — Creación",
+            "item": [
+                {
+                    "name": "Crear post",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Nuevo post\",\n    \"description\": \"Descripción de prueba\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "mutate"]
+                        },
+                        "description": "Simula la creación de un post (demo, sin persistencia)."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "03 — Actualización",
+            "item": [
+                {
+                    "name": "Reemplazar post (PUT)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Título actualizado\",\n    \"description\": \"Descripción actualizada\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "posts",
+                                "mutations",
+                                "{{postSlug}}"
+                            ]
+                        },
+                        "description": "Reemplaza los campos enviados en el body para el slug indicado."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar post parcial (PATCH)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"Solo cambio la descripción\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "posts",
+                                "mutations",
+                                "{{postSlug}}"
+                            ]
+                        },
+                        "description": "Actualiza solo los campos enviados en el body."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "04 — Eliminación",
+            "item": [
+                {
+                    "name": "Eliminar post",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Origin",
+                                "value": "{{baseUrl}}",
+                                "description": "Requerido en preview/producción Cloudflare"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "posts",
+                                "mutations",
+                                "{{postSlug}}"
+                            ]
+                        },
+                        "description": "Simula el borrado de un post por slug. No requiere body."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
