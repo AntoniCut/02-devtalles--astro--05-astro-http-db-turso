@@ -6,19 +6,27 @@
         "node": ">=22.12.0"
     },
     "scriptsDoc": {
+        
         "dev": "Servidor en :4321 con Astro DB remoto (Turso, --remote). Mismo destino que la API en dev habitual. Requiere .env.",
         "dev:local": "Servidor en :4321 con SQLite local (.astro/content.db), sin Turso.",
+        
         "db:seed:local": "Carga db/seed.dev.ts en la base local (tabla Clients en content.db).",
+        
         "build": "Build de producción (base de datos local por defecto).",
         "build:remote": "Build de producción contra Turso (--remote). Usado antes de desplegar.",
+        
         "deploy": "build:remote + wrangler deploy a Cloudflare Workers.",
+        
         "preview": "Previsualiza el build en :4322.",
         "astro": "CLI de Astro (pnpm astro db push, etc.).",
+        
         "db:push": "Sincroniza el esquema de db/config.ts en Turso (--remote).",
         "db:seed": "Ejecuta db/seed.dev.ts en Turso (--remote).",
+        
         "format": "Formatea JS/TS/Astro con Prettier y scripts/post-prettier-style.mjs.",
         "format:check": "Comprueba formato sin modificar archivos."
     },
+    
     "scripts": {
         "dev": "astro dev --remote --port 4321 --open",
         "dev:local": "astro dev --port 4321 --open",

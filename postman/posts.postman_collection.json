@@ -57,9 +57,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/list",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "list"]
+                            "raw": "{{baseUrl}}/api/posts/list"
                         },
                         "description": "Devuelve la colección completa del blog en JSON."
                     },
@@ -88,9 +86,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/first-post",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "first-post"]
+                            "raw": "{{baseUrl}}/api/posts/first-post"
                         },
                         "description": "Devuelve el post first-post."
                     },
@@ -116,9 +112,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/second-post",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "second-post"]
+                            "raw": "{{baseUrl}}/api/posts/second-post"
                         },
                         "description": "Devuelve el post second-post."
                     },
@@ -144,9 +138,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/third-post",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "third-post"]
+                            "raw": "{{baseUrl}}/api/posts/third-post"
                         },
                         "description": "Devuelve el post third-post."
                     },
@@ -172,9 +164,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/markdown-style-guide",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "markdown-style-guide"]
+                            "raw": "{{baseUrl}}/api/posts/markdown-style-guide"
                         },
                         "description": "Devuelve el post markdown-style-guide."
                     },
@@ -200,9 +190,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/using-mdx",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "using-mdx"]
+                            "raw": "{{baseUrl}}/api/posts/using-mdx"
                         },
                         "description": "Devuelve el post using-mdx."
                     },
@@ -232,9 +220,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/get-person.json",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "get-person.json"]
+                            "raw": "{{baseUrl}}/api/get-person.json"
                         },
                         "description": "Endpoint de ejemplo. Responde HTTP 400 a propósito con un JSON válido."
                     },
@@ -282,9 +268,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutate",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "mutate"]
+                            "raw": "{{baseUrl}}/api/posts/mutate"
                         },
                         "description": "Simula la creación de un post (demo, sin persistencia)."
                     },
@@ -333,14 +317,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
-                            "host": ["{{baseUrl}}"],
-                            "path": [
-                                "api",
-                                "posts",
-                                "mutations",
-                                "{{postSlug}}"
-                            ]
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
                         },
                         "description": "Reemplaza los campos enviados en el body para el slug indicado."
                     },
@@ -383,14 +360,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
-                            "host": ["{{baseUrl}}"],
-                            "path": [
-                                "api",
-                                "posts",
-                                "mutations",
-                                "{{postSlug}}"
-                            ]
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
                         },
                         "description": "Actualiza solo los campos enviados en el body."
                     },
@@ -434,14 +404,7 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}",
-                            "host": ["{{baseUrl}}"],
-                            "path": [
-                                "api",
-                                "posts",
-                                "mutations",
-                                "{{postSlug}}"
-                            ]
+                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
                         },
                         "description": "Simula el borrado de un post por slug. No requiere body."
                     },
@@ -469,9 +432,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/no-existe",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "no-existe"]
+                            "raw": "{{baseUrl}}/api/posts/no-existe"
                         },
                         "description": "Slug fuera de getStaticPaths. 404 de routing (puede ser HTML en Cloudflare)."
                     },
@@ -512,9 +473,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/no-existe",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "mutations", "no-existe"]
+                            "raw": "{{baseUrl}}/api/posts/mutations/no-existe"
                         },
                         "description": "Mutación SSR: 404 JSON si el slug no está en la content collection."
                     },
@@ -554,9 +513,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutate",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "mutate"]
+                            "raw": "{{baseUrl}}/api/posts/mutate"
                         },
                         "description": "Body JSON malformado → 400 Invalid JSON body."
                     },
