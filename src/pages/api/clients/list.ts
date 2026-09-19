@@ -19,7 +19,10 @@ export const prerender = false;
  * - Devuelve todos los clientes de la tabla Clients.
  */
 export const GET: APIRoute = async () => {
+    
+    /** - `SELECT * FROM clients` */
     const clients = await db.select().from(Clients);
 
     return jsonResponse(clients);
+
 };
