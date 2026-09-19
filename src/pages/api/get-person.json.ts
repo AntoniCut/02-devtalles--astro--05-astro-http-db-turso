@@ -8,6 +8,9 @@ import type { APIRoute } from "astro";
 import type { Person } from "@/src/interfaces/types";
 
 
+/** - `ssr: si se prerenderiza, cloudflare sirve el json como 200 y se pierde el 400 de demo` */
+export const prerender = false;
+
 /**
  * ----------------------------------------
  * -----  `GET({ params, request })`  -----

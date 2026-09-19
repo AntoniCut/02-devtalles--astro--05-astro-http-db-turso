@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "b2c3d4e5-posts-05-astro-http-db-turso",
         "name": "05-astro-http-db-turso — Posts",
-        "description": "API de posts (contenido del blog + mutaciones demo sin persistencia).\n\nLectura: GET estático/prerender. Creación/actualización/eliminación: requieren `pnpm dev`.",
+        "description": "API de posts (contenido del blog + mutaciones demo sin persistencia).\n\nLectura: GET estático/prerender. Creación/actualización/eliminación: requieren runtime (dev o Worker).\n\nGET /api/get-person.json responde 400 a propósito (demo).",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -21,6 +21,38 @@
             "item": [
                 {
                     "name": "Listar posts",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Content-Type json o cuerpo JSON (CF static puede omitir cabecera)', () => {",
+                                    "    const contentType = pm.response.headers.get('Content-Type');",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.be.an('array');",
+                                    "    if (contentType) {",
+                                    "        pm.expect(contentType).to.include('application/json');",
+                                    "    }",
+                                    "});",
+                                    "pm.test('array con los 5 slugs del blog', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.be.an('array');",
+                                    "    pm.expect(body.length).to.be.at.least(5);",
+                                    "    const ids = body.map((post) => post.id);",
+                                    "    pm.expect(ids).to.include.members([",
+                                    "        'first-post',",
+                                    "        'second-post',",
+                                    "        'third-post',",
+                                    "        'markdown-style-guide',",
+                                    "        'using-mdx'",
+                                    "    ]);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [],
@@ -34,21 +66,168 @@
                     "response": []
                 },
                 {
-                    "name": "Obtener post por slug",
+                    "name": "Obtener post first-post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('post first-post', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.id).to.eql('first-post');",
+                                    "    pm.expect(body.data).to.be.an('object');",
+                                    "    pm.expect(body.data.title).to.be.a('string');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/{{postSlug}}",
+                            "raw": "{{baseUrl}}/api/posts/first-post",
                             "host": ["{{baseUrl}}"],
-                            "path": ["api", "posts", "{{postSlug}}"]
+                            "path": ["api", "posts", "first-post"]
                         },
-                        "description": "Devuelve un post concreto por slug (p. ej. first-post, second-post)."
+                        "description": "Devuelve el post first-post."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener post second-post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('post second-post', () => {",
+                                    "    pm.expect(pm.response.json().id).to.eql('second-post');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/second-post",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "second-post"]
+                        },
+                        "description": "Devuelve el post second-post."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener post third-post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('post third-post', () => {",
+                                    "    pm.expect(pm.response.json().id).to.eql('third-post');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/third-post",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "third-post"]
+                        },
+                        "description": "Devuelve el post third-post."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener post markdown-style-guide",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('post markdown-style-guide', () => {",
+                                    "    pm.expect(pm.response.json().id).to.eql('markdown-style-guide');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/markdown-style-guide",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "markdown-style-guide"]
+                        },
+                        "description": "Devuelve el post markdown-style-guide."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener post using-mdx",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('post using-mdx', () => {",
+                                    "    pm.expect(pm.response.json().id).to.eql('using-mdx');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/using-mdx",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "using-mdx"]
+                        },
+                        "description": "Devuelve el post using-mdx."
                     },
                     "response": []
                 },
                 {
                     "name": "Get person (demo)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400 (demo intencional)', () => {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "pm.test('body con name y age', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.name).to.eql('John Doe');",
+                                    "    pm.expect(body.age).to.eql(30);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [],
@@ -57,7 +236,7 @@
                             "host": ["{{baseUrl}}"],
                             "path": ["api", "get-person.json"]
                         },
-                        "description": "Endpoint de ejemplo con datos de una persona."
+                        "description": "Endpoint de ejemplo. Responde HTTP 400 a propósito con un JSON válido."
                     },
                     "response": []
                 }
@@ -68,6 +247,23 @@
             "item": [
                 {
                     "name": "Crear post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('eco del body con method POST', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.method).to.eql('POST');",
+                                    "    pm.expect(body.title).to.eql('Nuevo post');",
+                                    "    pm.expect(body.description).to.eql('Descripción de prueba');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -101,6 +297,24 @@
             "item": [
                 {
                     "name": "Reemplazar post (PUT)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('eco PUT con slug first-post', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.method).to.eql('PUT');",
+                                    "    pm.expect(body.slug).to.eql('first-post');",
+                                    "    pm.expect(body.title).to.eql('Título actualizado');",
+                                    "    pm.expect(body.description).to.eql('Descripción actualizada');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -134,6 +348,23 @@
                 },
                 {
                     "name": "Actualizar post parcial (PATCH)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('eco PATCH con slug first-post', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.method).to.eql('PATCH');",
+                                    "    pm.expect(body.slug).to.eql('first-post');",
+                                    "    pm.expect(body.description).to.eql('Solo cambio la descripción');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "PATCH",
                         "header": [
@@ -172,18 +403,34 @@
             "item": [
                 {
                     "name": "Eliminar post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('eco DELETE sin persistencia', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.method).to.eql('DELETE');",
+                                    "    pm.expect(body.slug).to.eql('first-post');",
+                                    "    pm.expect(body.message).to.eql('Post \"first-post\" deleted');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "DELETE",
                         "header": [
                             {
                                 "key": "Content-Type",
-                                "value": "application/json",
-                                "description": "Evita 403 CSRF en dev si Postman no envía Origin"
+                                "value": "application/json"
                             },
                             {
                                 "key": "Origin",
                                 "value": "{{baseUrl}}",
-                                "description": "Debe coincidir con la URL (localhost, no 127.0.0.1). Activa el entorno Local."
+                                "description": "Evita 403 CSRF en dev. Debe coincidir con la URL (localhost, no 127.0.0.1)."
                             }
                         ],
                         "url": {
@@ -197,6 +444,121 @@
                             ]
                         },
                         "description": "Simula el borrado de un post por slug. No requiere body."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "05 — Errores",
+            "item": [
+                {
+                    "name": "GET post inexistente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 404', () => pm.response.to.have.status(404));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/no-existe",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "no-existe"]
+                        },
+                        "description": "Slug fuera de getStaticPaths. 404 de routing (puede ser HTML en Cloudflare)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT post inexistente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 404', () => pm.response.to.have.status(404));",
+                                    "pm.test('error Post not found', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.error).to.eql('Post \"no-existe\" not found');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"no existe\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutations/no-existe",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "mutations", "no-existe"]
+                        },
+                        "description": "Mutación SSR: 404 JSON si el slug no está en la content collection."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST JSON inválido",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error Invalid JSON body', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql('Invalid JSON body');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/posts/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "posts", "mutate"]
+                        },
+                        "description": "Body JSON malformado → 400 Invalid JSON body."
                     },
                     "response": []
                 }

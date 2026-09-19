@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "a1b2c3d4-clients-05-astro-http-db-turso",
         "name": "05-astro-http-db-turso — Clients",
-        "description": "CRUD de la tabla Clients (Astro DB + Turso).\n\nRequiere `pnpm dev` con Turso remoto (`astro dev --remote`).",
+        "description": "CRUD de la tabla Clients (Astro DB + Turso).\n\nRequiere runtime con Turso (`pnpm dev --remote` o Cloudflare Worker).\n\nEl flujo feliz crea un cliente de prueba, lo actualiza y lo borra. No muta los ids seed 1–5.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -11,7 +11,11 @@
             "value": "http://localhost:4321"
         },
         {
-            "key": "clientId",
+            "key": "testClientId",
+            "value": ""
+        },
+        {
+            "key": "seedClientId",
             "value": "1"
         }
     ],
@@ -21,6 +25,29 @@
             "item": [
                 {
                     "name": "Listar clientes",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Content-Type json', () => {",
+                                    "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                                    "});",
+                                    "pm.test('array con seed 1-5', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.be.an('array');",
+                                    "    pm.expect(body.length).to.be.at.least(5);",
+                                    "    const ids = body.map((client) => client.id);",
+                                    "    pm.expect(ids).to.include.members([1, 2, 3, 4, 5]);",
+                                    "    const john = body.find((client) => client.id === 1);",
+                                    "    pm.expect(john).to.include({ name: 'John Doe', age: 30, isActive: true });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [],
@@ -34,16 +61,36 @@
                     "response": []
                 },
                 {
-                    "name": "Obtener cliente por id",
+                    "name": "Obtener cliente seed por id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('cliente seed id 1', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.include({",
+                                    "        id: 1,",
+                                    "        name: 'John Doe',",
+                                    "        age: 30,",
+                                    "        isActive: true",
+                                    "    });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/{{clientId}}",
+                            "raw": "{{baseUrl}}/api/clients/{{seedClientId}}",
                             "host": ["{{baseUrl}}"],
-                            "path": ["api", "clients", "{{clientId}}"]
+                            "path": ["api", "clients", "{{seedClientId}}"]
                         },
-                        "description": "Devuelve un cliente concreto por su id numérico."
+                        "description": "Lee el cliente seed id 1. No usa clientId para no chocar con el cliente de prueba."
                     },
                     "response": []
                 }
@@ -54,6 +101,28 @@
             "item": [
                 {
                     "name": "Crear cliente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('cliente creado y clientId capturado', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.id).to.be.a('number');",
+                                    "    pm.expect(body.id).to.be.above(5);",
+                                    "    pm.expect(body).to.include({",
+                                    "        name: 'Postman Test Client',",
+                                    "        age: 29,",
+                                    "        isActive: true",
+                                    "    });",
+                                    "    pm.collectionVariables.set('testClientId', String(body.id));",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -64,7 +133,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Laura Martínez\",\n    \"age\": 29,\n    \"isActive\": true\n}",
+                            "raw": "{\n    \"name\": \"Postman Test Client\",\n    \"age\": 29,\n    \"isActive\": true\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -76,7 +145,7 @@
                             "host": ["{{baseUrl}}"],
                             "path": ["api", "clients", "mutate"]
                         },
-                        "description": "Inserta un nuevo cliente en Astro DB."
+                        "description": "Inserta un cliente de prueba y guarda su id en clientId. No toca los seed 1–5."
                     },
                     "response": []
                 }
@@ -87,6 +156,27 @@
             "item": [
                 {
                     "name": "Reemplazar cliente (PUT)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const clientId = Number(pm.collectionVariables.get('testClientId'));",
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('cliente reemplazado', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.include({",
+                                    "        id: clientId,",
+                                    "        name: 'Postman Test Client',",
+                                    "        age: 30,",
+                                    "        isActive: false",
+                                    "    });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -97,7 +187,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Laura Martínez\",\n    \"age\": 30,\n    \"isActive\": false\n}",
+                            "raw": "{\n    \"name\": \"Postman Test Client\",\n    \"age\": 30,\n    \"isActive\": false\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -105,21 +195,42 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}",
                             "host": ["{{baseUrl}}"],
                             "path": [
                                 "api",
                                 "clients",
                                 "mutations",
-                                "{{clientId}}"
+                                "{{testClientId}}"
                             ]
                         },
-                        "description": "Actualiza todos los campos del cliente indicado."
+                        "description": "Actualiza todos los campos del cliente de prueba."
                     },
                     "response": []
                 },
                 {
                     "name": "Actualizar cliente parcial (PATCH)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const clientId = Number(pm.collectionVariables.get('testClientId'));",
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('isActive actualizado a true', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.include({",
+                                    "        id: clientId,",
+                                    "        name: 'Postman Test Client',",
+                                    "        age: 30,",
+                                    "        isActive: true",
+                                    "    });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "PATCH",
                         "header": [
@@ -138,16 +249,51 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}",
                             "host": ["{{baseUrl}}"],
                             "path": [
                                 "api",
                                 "clients",
                                 "mutations",
-                                "{{clientId}}"
+                                "{{testClientId}}"
                             ]
                         },
-                        "description": "Actualiza solo los campos enviados en el body."
+                        "description": "Actualiza solo isActive del cliente de prueba."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener cliente creado",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const clientId = Number(pm.collectionVariables.get('testClientId'));",
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('GET refleja el PATCH', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body).to.include({",
+                                    "        id: clientId,",
+                                    "        name: 'Postman Test Client',",
+                                    "        age: 30,",
+                                    "        isActive: true",
+                                    "    });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/{{testClientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "{{testClientId}}"]
+                        },
+                        "description": "Confirma que el cliente de prueba quedó persistido tras PUT/PATCH."
                     },
                     "response": []
                 }
@@ -158,31 +304,332 @@
             "item": [
                 {
                     "name": "Eliminar cliente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const clientId = Number(pm.collectionVariables.get('testClientId'));",
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('mensaje DELETE', () => {",
+                                    "    const body = pm.response.json();",
+                                    "    pm.expect(body.method).to.eql('DELETE');",
+                                    "    pm.expect(body.id).to.eql(clientId);",
+                                    "    pm.expect(body.message).to.eql('Client \"' + clientId + '\" deleted');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "DELETE",
                         "header": [
                             {
                                 "key": "Content-Type",
-                                "value": "application/json",
-                                "description": "Evita 403 CSRF en dev si Postman no envía Origin"
+                                "value": "application/json"
                             },
                             {
                                 "key": "Origin",
                                 "value": "{{baseUrl}}",
-                                "description": "Debe coincidir con la URL (localhost, no 127.0.0.1). Activa el entorno Local para resolver {{baseUrl}}."
+                                "description": "Evita 403 CSRF en dev. Debe coincidir con la URL (localhost, no 127.0.0.1)."
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}",
                             "host": ["{{baseUrl}}"],
                             "path": [
                                 "api",
                                 "clients",
                                 "mutations",
-                                "{{clientId}}"
+                                "{{testClientId}}"
                             ]
                         },
-                        "description": "Borra un cliente por id. No requiere body."
+                        "description": "Borra el cliente de prueba. No requiere body."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "05 — Errores",
+            "item": [
+                {
+                    "name": "GET id inválido",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error Invalid client id', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql('Invalid client id');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/abc",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "abc"]
+                        },
+                        "description": "Id no numérico → 400 Invalid client id."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET cliente inexistente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 404', () => pm.response.to.have.status(404));",
+                                    "pm.test('error Client not found', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql('Client \"99999\" not found');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/99999",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "99999"]
+                        },
+                        "description": "Id válido pero inexistente → 404."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST name vacío",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error name required', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql(",
+                                    "        'name is required and must be a non-empty string'",
+                                    "    );",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"   \",\n    \"age\": 29,\n    \"isActive\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "mutate"]
+                        },
+                        "description": "name vacío o solo espacios → 400."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST age negativo",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error age required', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql(",
+                                    "        'age is required and must be a non-negative integer'",
+                                    "    );",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Invalido\",\n    \"age\": -1,\n    \"isActive\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "mutate"]
+                        },
+                        "description": "age negativo → 400."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PATCH vacío",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error at least one field', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql(",
+                                    "        'At least one field is required'",
+                                    "    );",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{seedClientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "clients",
+                                "mutations",
+                                "{{seedClientId}}"
+                            ]
+                        },
+                        "description": "PATCH {} sobre el seed id 1. Falla validación antes de escribir."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE cliente inexistente",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 404', () => pm.response.to.have.status(404));",
+                                    "pm.test('error Client not found', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql(",
+                                    "        'Client \"99999\" not found'",
+                                    "    );",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Origin",
+                                "value": "{{baseUrl}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutations/99999",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "clients",
+                                "mutations",
+                                "99999"
+                            ]
+                        },
+                        "description": "DELETE de un id que no existe → 404."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST JSON inválido",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 400', () => pm.response.to.have.status(400));",
+                                    "pm.test('error Invalid JSON body', () => {",
+                                    "    pm.expect(pm.response.json().error).to.eql('Invalid JSON body');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "mutate"]
+                        },
+                        "description": "Body JSON malformado → 400 Invalid JSON body."
                     },
                     "response": []
                 }
