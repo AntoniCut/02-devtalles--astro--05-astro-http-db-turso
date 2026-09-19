@@ -1,0 +1,187 @@
+{
+    "info": {
+        "_postman_id": "a1b2c3d4-clients-05-astro-http-db-turso",
+        "name": "05-astro-http-db-turso — Clients",
+        "description": "CRUD de la tabla Clients (Astro DB + Turso).\n\nRequiere `pnpm dev` con Turso remoto (`astro dev --remote`).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:4321"
+        },
+        {
+            "key": "clientId",
+            "value": "1"
+        }
+    ],
+    "item": [
+        {
+            "name": "01 — Lectura",
+            "item": [
+                {
+                    "name": "Listar clientes",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/list",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "list"]
+                        },
+                        "description": "Devuelve todos los registros de la tabla Clients."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Obtener cliente por id",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/{{clientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "{{clientId}}"]
+                        },
+                        "description": "Devuelve un cliente concreto por su id numérico."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "02 — Creación",
+            "item": [
+                {
+                    "name": "Crear cliente",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Laura Martínez\",\n    \"age\": 29,\n    \"isActive\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutate",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "clients", "mutate"]
+                        },
+                        "description": "Inserta un nuevo cliente en Astro DB."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "03 — Actualización",
+            "item": [
+                {
+                    "name": "Reemplazar cliente (PUT)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Laura Martínez\",\n    \"age\": 30,\n    \"isActive\": false\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "clients",
+                                "mutations",
+                                "{{clientId}}"
+                            ]
+                        },
+                        "description": "Actualiza todos los campos del cliente indicado."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Actualizar cliente parcial (PATCH)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"isActive\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "clients",
+                                "mutations",
+                                "{{clientId}}"
+                            ]
+                        },
+                        "description": "Actualiza solo los campos enviados en el body."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "04 — Eliminación",
+            "item": [
+                {
+                    "name": "Eliminar cliente",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Origin",
+                                "value": "{{baseUrl}}",
+                                "description": "Requerido en preview/producción Cloudflare"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/clients/mutations/{{clientId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "clients",
+                                "mutations",
+                                "{{clientId}}"
+                            ]
+                        },
+                        "description": "Borra un cliente por id. No requiere body."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
