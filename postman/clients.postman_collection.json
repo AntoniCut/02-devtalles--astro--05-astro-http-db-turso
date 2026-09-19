@@ -162,9 +162,14 @@
                         "method": "DELETE",
                         "header": [
                             {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "Evita 403 CSRF en dev si Postman no envía Origin"
+                            },
+                            {
                                 "key": "Origin",
                                 "value": "{{baseUrl}}",
-                                "description": "Requerido en preview/producción Cloudflare"
+                                "description": "Debe coincidir con la URL (localhost, no 127.0.0.1). Activa el entorno Local para resolver {{baseUrl}}."
                             }
                         ],
                         "url": {

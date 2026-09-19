@@ -108,6 +108,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     if (body instanceof Response) {
         return body;
     }
+    
 
     /** - `parsear los datos del cliente` */
     const patch = parseClientPatchInput(body);
@@ -125,6 +126,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
         .returning();
 
     return jsonResponse(updated[0]);
+
 };
 
 
