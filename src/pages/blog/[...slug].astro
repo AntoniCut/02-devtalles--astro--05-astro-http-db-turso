@@ -6,31 +6,28 @@
     *  ------------------------------------------------------------------  *
  */
 
-import { getEntry, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
 import BlogPost from "@/src/layouts/BlogPost.astro";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 
 
-/** - `Deshabilita la prerenderización de la página`. */
-export const prerender = false;
+export const getStaticPaths = (async () => {
+    const posts = await getCollection("blog");
 
-/** - `slug del post desde la URL` */
-const { slug } = Astro.params;
+    return posts.map((post) => ({
+        params: { slug: post.id },
+        props: post,
+    }));
+}) satisfies GetStaticPaths;
 
-if (slug === undefined) {
-    return Astro.redirect("/404");
-}
+type Props = CollectionEntry<"blog">;
 
-/** - `post solicitado en la colección blog` */
-const post = await getEntry("blog", slug);
-
-if (post === undefined) {
-    return Astro.redirect("/404");
-}
+const post = Astro.props;
 
 const { Content } = await render(post);
 
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} id={post.id}>
     <Content />
 </BlogPost>

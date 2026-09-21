@@ -20,7 +20,6 @@ export const prerender = false;
  * - Crea un nuevo cliente en la tabla Clients.
  */
 export const POST: APIRoute = async ({ request }) => {
-    
     /** - `parsear el body de la request` */
     const body = await parseJsonBody(request);
 
@@ -31,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     /** - `parsear los datos del cliente` */
     const input = parseClientInput(body);
-    
+
     //  -----  Si los datos del cliente no son válidos, devolver un error 400  -----
     if (input instanceof Response) {
         return input;
@@ -42,5 +41,4 @@ export const POST: APIRoute = async ({ request }) => {
 
     //  -----  Devolver el cliente creado en formato JSON  -----
     return jsonResponse(created[0], 201);
-    
 };

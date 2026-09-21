@@ -7,6 +7,8 @@
 import { Clients, db, eq } from "astro:db";
 import { errorResponse } from "@/src/pages/api/posts/_helpers";
 import type {
+
+
     Client,
     ClientInput,
     ClientPatchInput,

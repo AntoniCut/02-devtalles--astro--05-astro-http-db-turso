@@ -6,6 +6,7 @@
 
 import type { ApiSection, ApiUseCase } from "@/src/interfaces/types";
 
+
 /** - `casos de uso de la api de posts` */
 export const POSTS_USE_CASES: ApiUseCase[] = [
     {
