@@ -33,7 +33,10 @@ export default defineConfig({
 
     //output: "server",
 
-    adapter: cloudflare(),
+    adapter: cloudflare({
+        /** Evita conflicto @astrojs/vue resolve.external vs validación del plugin de Cloudflare en prerender. */
+        prerenderEnvironment: "node",
+    }),
 
     fonts: [
         {
