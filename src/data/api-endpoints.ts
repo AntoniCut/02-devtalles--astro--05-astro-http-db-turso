@@ -111,6 +111,60 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
             },
         ],
     },
+
+    {
+        title: "05 — Likes (GET / POST SSR + Astro DB)",
+        description:
+            "Likes persistidos en la tabla Posts (Turso). Requiere runtime (`pnpm dev --remote` o Worker). Usado por el componente LikeCounter en el blog.",
+        endpoints: [
+            {
+                method: "GET",
+                path: "/api/posts/likes/:slug",
+                title: "Obtener likes de un post",
+                description:
+                    "Devuelve `{ id, title, likes }`. Si el slug no está en Turso, responde 200 con `title: \"Post not found\"` y `likes: 0` (sin insertar).",
+                mode: "ssr",
+                relatedLinks: [
+                    {
+                        label: "first-post",
+                        path: "/api/posts/likes/first-post",
+                    },
+                    {
+                        label: "second-post",
+                        path: "/api/posts/likes/second-post",
+                    },
+                    {
+                        label: "third-post",
+                        path: "/api/posts/likes/third-post",
+                    },
+                    {
+                        label: "markdown-style-guide",
+                        path: "/api/posts/likes/markdown-style-guide",
+                    },
+                    {
+                        label: "using-mdx",
+                        path: "/api/posts/likes/using-mdx",
+                    },
+                    {
+                        label: "no-existe (demo)",
+                        path: "/api/posts/likes/no-existe",
+                    },
+                ],
+            },
+            {
+                method: "POST",
+                path: "/api/posts/likes/:slug",
+                title: "Incrementar likes (o crear post en Turso)",
+                description:
+                    "Si el slug no existe en la tabla Posts, lo crea e incrementa likes. Respuesta: texto `Ok!`.",
+                mode: "ssr",
+                bodyExample: `
+                    {
+                        "likes": 1
+                    }`,
+            },
+        ],
+    },
 ];
 
 /** - `casos de uso de la api de clients` */
@@ -217,7 +271,7 @@ export const API_SECTIONS: ApiSection[] = [
         id: "posts",
         title: "Posts",
         description:
-            "Endpoints del blog basados en content collections. Lectura estática y mutaciones de demo sin persistencia.",
+            "Endpoints del blog: lectura estática (content collections), mutaciones demo sin persistencia y likes en Turso bajo `/api/posts/likes/:slug`.",
         useCases: POSTS_USE_CASES,
     },
 

@@ -18,7 +18,7 @@ const pageTitle = `API — ${SITE_TITLE}`;
 
 /** - `descripción de la página de documentación api` */
 const pageDescription =
-    "Documentación de los endpoints HTTP del proyecto con todos los casos de uso.";
+    "Documentación de los endpoints HTTP del proyecto: posts (contenido, mutaciones demo y likes Turso) y clients (CRUD Astro DB).";
 
 ---
 
@@ -34,9 +34,10 @@ const pageDescription =
             <header class="page-header">
                 <h1>API HTTP</h1>
                 <p>
-                    Referencia de endpoints del proyecto. Los GET estáticos se
-                    pueden probar desde los enlaces. Las mutaciones requieren
-                    Postman o curl con body JSON.
+                    Referencia de endpoints del proyecto. Los GET estáticos y
+                    los GET de likes (<code>/api/posts/likes/…</code>) se pueden
+                    probar desde los enlaces. Las mutaciones y el POST de likes
+                    requieren Postman o curl con body JSON y servidor con Turso.
                 </p>
             </header>
 

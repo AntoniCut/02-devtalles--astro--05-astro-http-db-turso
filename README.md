@@ -19,7 +19,7 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 - Tablas `Clients` y `Posts` en `db/config.ts`; seed manual en `db/seed.dev.ts` (clientes + posts del blog con likes aleatorios)
 - API **Clients** (CRUD SSR) en `/api/clients/*`
 - API **Posts** (lectura del blog + mutaciones demo) en `/api/posts/*`
-- API **Likes** (lectura desde tabla `Posts`) en `GET /api/likes/:id` — endpoint principal del curso para este repo
+- API **Likes** (tabla `Posts` en Turso) en `GET /api/posts/likes/:slug` y `POST /api/posts/likes/:slug` — endpoint principal del curso para este repo
 - Colecciones Postman en `postman/` (Local y Cloudflare): **Likes**, Clients, Posts
 - Alias `@/*` en TypeScript; formateo con Prettier + `prettier-plugin-astro`
 
@@ -79,7 +79,7 @@ Importa desde `postman/`:
 
 | Archivo | Uso |
 | :------ | :-- |
-| `likes.postman_collection.json` | **Principal:** `GET /api/likes/:id` (un request por cada slug del blog + post inexistente) |
+| `likes.postman_collection.json` | **Principal:** `GET/POST /api/posts/likes/:slug` (un request por cada slug del blog + post inexistente) |
 | `clients.postman_collection.json` | CRUD Clients |
 | `posts.postman_collection.json` | API del blog (content collections) |
 | `local.postman_environment.json` | `baseUrl` → `http://localhost:4321` |
@@ -192,7 +192,7 @@ Despliegue automático en push a `master` vía GitHub Actions (`.github/workflow
 
 Lo que incluye cada deploy exitoso (estado actual del repo):
 
-- Blog estático/SSR, APIs **clients**, **posts** y **`GET /api/likes/:id`**
+- Blog estático/SSR, APIs **clients**, **posts** (contenido + **`/api/posts/likes/:slug`** en Turso)
 - Astro DB en runtime apuntando a Turso (tablas `Clients` y `Posts`)
 - Adaptador Cloudflare (imágenes, KV de sesión según config)
 

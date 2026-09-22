@@ -13,6 +13,7 @@ import cloudflare from "@astrojs/cloudflare";
 import db from "@astrojs/db";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import vue from "@astrojs/vue";
 import { defineConfig, fontProviders } from "astro/config";
 
 
@@ -28,7 +29,7 @@ const base = process.env.BASE ?? "/";
 export default defineConfig({
     site,
     base,
-    integrations: [mdx(), sitemap(), db({ mode: "web" })],
+    integrations: [mdx(), sitemap(), vue(), db({ mode: "web" })],
 
     //output: "server",
 

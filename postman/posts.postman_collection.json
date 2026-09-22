@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "b2c3d4e5-posts-05-astro-http-db-turso",
         "name": "05-astro-http-db-turso — Posts",
-        "description": "API de posts (contenido del blog + mutaciones demo sin persistencia).\n\nLectura: GET estático/prerender. Creación/actualización/eliminación: requieren runtime (dev o Worker).\n\nGET /api/get-person.json responde 400 a propósito (demo).",
+        "description": "API de posts (contenido del blog + mutaciones demo + likes Turso).\n\nLectura contenido: GET estático/prerender. Likes: GET/POST /api/posts/likes/:slug (Turso, runtime). Mutaciones demo: sin persistencia.\n\nGET /api/get-person.json responde 400 a propósito (demo).",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -13,6 +13,10 @@
         {
             "key": "postSlug",
             "value": "first-post"
+        },
+        {
+            "key": "newPostId",
+            "value": "post-postman-nuevo"
         }
     ],
     "item": [
@@ -518,6 +522,301 @@
                         "description": "Body JSON malformado → 400 Invalid JSON body."
                     },
                     "response": []
+                }
+            ]
+        },
+        {
+            "name": "06 — Likes (Turso)",
+            "description": "GET/POST /api/posts/likes/:slug — Astro DB + Turso.",
+            "item": [
+                {
+                    "name": "01 — Lectura",
+                    "item": [
+                        {
+                            "name": "GET /api/posts/likes/{{postSlug}}",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('post con id, title y likes', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql(pm.variables.get('postSlug'));",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/{{postSlug}}"
+                                },
+                                "description": "GET /api/posts/likes/:slug con un id de la tabla Posts. Respuesta 200: { id, title, likes }."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET /api/posts/likes/first-post",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('likes de first-post', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql('first-post');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/first-post"
+                                },
+                                "description": "GET /api/posts/likes/first-post."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET /api/posts/likes/second-post",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('likes de second-post', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql('second-post');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/second-post"
+                                },
+                                "description": "GET /api/posts/likes/second-post."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET /api/posts/likes/third-post",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('likes de third-post', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql('third-post');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/third-post"
+                                },
+                                "description": "GET /api/posts/likes/third-post."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET /api/posts/likes/markdown-style-guide",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('likes de markdown-style-guide', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql('markdown-style-guide');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/markdown-style-guide"
+                                },
+                                "description": "GET /api/posts/likes/markdown-style-guide."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET /api/posts/likes/using-mdx",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('likes de using-mdx', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql('using-mdx');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/using-mdx"
+                                },
+                                "description": "GET /api/posts/likes/using-mdx."
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "02 — Crear post (Turso)",
+                    "item": [
+                        {
+                            "name": "POST crear post (Turso)",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('respuesta Ok', () => {",
+                                            "    pm.expect(pm.response.text()).to.eql('Ok!');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"likes\": 10\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/{{newPostId}}"
+                                },
+                                "description": "Inserta el post en la tabla Posts si no existe e incrementa likes. Cambia newPostId para otro id."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "GET verificar post creado",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('post creado en Turso', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body.id).to.eql(pm.collectionVariables.get('newPostId'));",
+                                            "    pm.expect(body.likes).to.be.a('number');",
+                                            "    pm.expect(body.title).to.be.a('string');",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/{{newPostId}}"
+                                },
+                                "description": "Ejecutar después del POST para comprobar el registro en Turso."
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "03 — Post inexistente (solo GET)",
+                    "item": [
+                        {
+                            "name": "GET /api/posts/likes/no-existe",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                            "pm.test('post no encontrado con likes 0', () => {",
+                                            "    const body = pm.response.json();",
+                                            "    pm.expect(body).to.include({",
+                                            "        id: 'no-existe',",
+                                            "        title: 'Post not found',",
+                                            "        likes: 0",
+                                            "    });",
+                                            "});"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/posts/likes/no-existe"
+                                },
+                                "description": "GET /api/posts/likes/no-existe. Respuesta 200: { id: \"no-existe\", title: \"Post not found\", likes: 0 }."
+                            },
+                            "response": []
+                        }
+                    ]
                 }
             ]
         }
