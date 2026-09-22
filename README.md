@@ -14,12 +14,14 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 
 ## Características
 
-- Blog con posts en `src/content/blog/`
-- APIs JSON estáticas en `/api/posts/*`
-- `ClientRouter` para transiciones de vista
-- Alias `@/*` en TypeScript
-- Formateo con Prettier + `prettier-plugin-astro`
-- Astro DB instalado (`@astrojs/db`)
+- Blog con posts en `src/content/blog/` y transiciones de vista (`ClientRouter`, `transition:name` en imágenes del listado → detalle)
+- **Content Collections** para el blog; **Astro DB + Turso** para datos de runtime
+- Tablas `Clients` y `Posts` en `db/config.ts`; seed manual en `db/seed.dev.ts` (clientes + posts del blog con likes aleatorios)
+- API **Clients** (CRUD SSR) en `/api/clients/*`
+- API **Posts** (lectura del blog + mutaciones demo) en `/api/posts/*`
+- API **Likes** (lectura desde tabla `Posts`) en `GET /api/likes/:id` — endpoint principal del curso para este repo
+- Colecciones Postman en `postman/` (Local y Cloudflare): **Likes**, Clients, Posts
+- Alias `@/*` en TypeScript; formateo con Prettier + `prettier-plugin-astro`
 
 ## Estructura
 
@@ -39,7 +41,11 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 │   ├── layouts/
 │   ├── pages/
 │   │   └── api/
+│   │       ├── clients/
+│   │       ├── likes/
+│   │       └── posts/
 │   └── styles/
+├── postman/            # Colecciones y entornos Postman
 ├── scripts/
 ├── astro.config.mjs
 ├── pnpm-workspace.yaml # patchedDependencies de @astrojs/db
@@ -49,18 +55,37 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 
 ## Comandos
 
-| Comando              | Acción                                              |
-| :------------------- | :-------------------------------------------------- |
-| `pnpm install`       | Instala dependencias                                |
-| `pnpm dev`           | Servidor de desarrollo en `http://localhost:4321` |
-| `pnpm build`         | Build de producción en `./dist/`                    |
-| `pnpm build:remote`  | Build conectado a Turso (`--remote`)                |
-| `pnpm preview`       | Preview local en `http://localhost:4322`            |
-| `pnpm deploy`        | Build + despliegue a Cloudflare Workers             |
-| `pnpm db:push`       | Sincroniza el esquema de tablas con la BD local     |
-| `pnpm db:seed`       | Inserta datos de prueba desde `db/seed.dev.ts`      |
-| `pnpm format`        | Formatea código con Prettier                        |
-| `pnpm format:check`  | Comprueba formato sin modificar archivos            |
+Los textos largos de cada script están también en `package.json` → `scriptsDoc`.
+
+| Comando | Acción |
+| :------ | :----- |
+| `pnpm install` | Instala dependencias (aplica el parche de `@astrojs/db`) |
+| `pnpm dev` | Dev en `http://localhost:4321` con **Turso** (`astro dev --remote`). Modo habitual para API y likes. Requiere `.env`. |
+| `pnpm dev:local` | Dev en `:4321` con SQLite local (`.astro/content.db`), sin Turso |
+| `pnpm db:push` | Sincroniza el esquema de `db/config.ts` en **Turso** (`astro db push --remote`) |
+| `pnpm db:seed` | Ejecuta `db/seed.dev.ts` en **Turso** (Clients + Posts desde el blog) |
+| `pnpm db:seed:local` | Mismo seed en la base **local** (`astro db execute db/seed.dev.ts`) |
+| `pnpm build` | `astro build` sin `--remote`. Con Cloudflare + Astro DB suele fallar; no uses este comando para desplegar |
+| `pnpm build:remote` | Build de producción contra **Turso** (`astro build --remote`) → `./dist/` |
+| `pnpm preview` | Sirve el último build en `http://localhost:4322` |
+| `pnpm deploy` | `pnpm build:remote` + `wrangler deploy` al worker de Cloudflare |
+| `pnpm astro …` | CLI de Astro (ej. `pnpm astro db push --remote`) |
+| `pnpm format` | Prettier + `scripts/post-prettier-style.mjs` |
+| `pnpm format:check` | Comprueba formato sin modificar archivos |
+
+### Postman
+
+Importa desde `postman/`:
+
+| Archivo | Uso |
+| :------ | :-- |
+| `likes.postman_collection.json` | **Principal:** `GET /api/likes/:id` (un request por cada slug del blog + post inexistente) |
+| `clients.postman_collection.json` | CRUD Clients |
+| `posts.postman_collection.json` | API del blog (content collections) |
+| `local.postman_environment.json` | `baseUrl` → `http://localhost:4321` |
+| `cloudflare.postman_environment.json` | `baseUrl` → worker `05-astro-http-db-turso` |
+
+> No confundas el worker **`05-astro-http-db-turso`** con el proyecto antiguo **`05-astro-http`** (otra URL en `*.workers.dev`).
 
 ## Astro DB + Turso
 
@@ -95,21 +120,28 @@ ASTRO_DB_APP_TOKEN=tu-token-aqui
 
 No uses el prefijo `PUBLIC_` en estas variables.
 
-> Los comandos `pnpm db:push` y `pnpm dev` usan una SQLite **local** y no necesitan Turso. Solo los comandos con `--remote` o `build:remote` requieren `.env`.
+| Modo | Comandos | Base de datos |
+| :--- | :------- | :------------ |
+| Desarrollo habitual (API, Turso) | `pnpm dev`, `pnpm db:push`, `pnpm db:seed` | Remota (Turso) — requiere `.env` |
+| Desarrollo solo local | `pnpm dev:local`, `pnpm db:seed:local` | `.astro/content.db` (el esquema local se recrea al arrancar `dev:local`; `db push` del CLI apunta a remoto en este repo) |
+| Producción / CI | `pnpm build:remote`, `pnpm deploy` | Turso + Cloudflare Worker |
 
 ### Flujo de desarrollo
 
 1. Define tablas en `db/config.ts`
-2. Aplica el esquema: `pnpm db:push`
-3. (Opcional) Carga datos de prueba: `pnpm db:seed`
-4. Arranca el servidor: `pnpm dev`
+2. Aplica el esquema en Turso: `pnpm db:push`
+3. (Opcional) Datos de prueba en Turso: `pnpm db:seed`
+4. Arranca con Turso: `pnpm dev`
+5. Prueba la API con Postman (entorno Local o Cloudflare) — colección **Likes**
 
-Para producción con Turso:
+Para producción:
 
 ```bash
-pnpm astro db push --remote
-pnpm db:seed -- --remote
+pnpm db:push
+pnpm db:seed
 pnpm build:remote
+# o en un paso:
+pnpm deploy
 ```
 
 ### Seed manual (Astro 6.4)
@@ -150,9 +182,19 @@ pnpm deploy
 
 Despliegue automático en push a `master` vía GitHub Actions (`.github/workflows/deploy.yml`):
 
-1. `pnpm install --frozen-lockfile` (aplica el parche de `@astrojs/db`)
-2. `pnpm build:remote` con credenciales Turso
-3. `wrangler deploy`
+| Paso | Qué hace |
+| :--- | :------- |
+| Checkout + pnpm + Node 22 | Entorno de CI |
+| `pnpm install --frozen-lockfile` | Dependencias y parche `@astrojs/db` |
+| `pnpm build:remote` | Build SSR contra Turso; `SITE` fijado a la URL del worker `05-astro-http-db-turso` |
+| **Verify Cloudflare worker target** | Comprueba que `wrangler.jsonc` y `dist/server/wrangler.json` despliegan el mismo nombre de worker (evita publicar en el proyecto equivocado) |
+| `wrangler deploy` | Sube el worker a Cloudflare |
+
+Lo que incluye cada deploy exitoso (estado actual del repo):
+
+- Blog estático/SSR, APIs **clients**, **posts** y **`GET /api/likes/:id`**
+- Astro DB en runtime apuntando a Turso (tablas `Clients` y `Posts`)
+- Adaptador Cloudflare (imágenes, KV de sesión según config)
 
 Secrets requeridos en el repositorio:
 
