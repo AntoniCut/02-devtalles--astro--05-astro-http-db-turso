@@ -35,7 +35,7 @@
 
 <script lang="ts" setup>
 
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import confetti from 'canvas-confetti';
 
     interface Props {
@@ -50,6 +50,34 @@
     const likeCount = ref(0);
     const likeClicks = ref(0);
     const isLoading = ref(true);
+
+
+    /** - `URL base del API de likes` */
+    const likesUrl = (): string => {
+        const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+        return `${base}/api/posts/likes/${encodeURIComponent(props.postId)}`;
+    };
+
+    //  ------  Persiste en Turso cuando el usuario incrementa likes (no al GET inicial).  ------
+    watch(likeCount, (newVal) => {
+        if (isLoading.value || likeClicks.value === 0) {
+            return;
+        }
+
+        console.log("New Likes => ", newVal);
+
+        const clicksToSave = likeClicks.value;
+        likeClicks.value = 0;
+
+        void fetch(likesUrl(), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ likes: clicksToSave }),
+        });
+    });
 
 
     const likePost = () => {
@@ -71,7 +99,7 @@
 
     const getCurrentLikes = async () => {
         
-        const resp = await fetch(`/api/posts/likes/${props.postId}`);
+        const resp = await fetch(likesUrl());
 
         if (!resp.ok) {
             throw new Error("Failed to fetch likes");
