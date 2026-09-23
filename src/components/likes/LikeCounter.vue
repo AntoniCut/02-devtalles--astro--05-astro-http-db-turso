@@ -6,9 +6,10 @@
 -->
 
 <!--
-    - Componente para mostrar el contador de likes de un post
-    - Componente para incrementar el número de likes de un post
+    - Componente en Vue js para mostrar el contador de likes de un post
+      y permitir incrementar el número de likes de un post.
 -->
+
 
 <template>
     
@@ -35,8 +36,11 @@
 
 <script lang="ts" setup>
 
-    import { ref, watch } from 'vue';
-    import confetti from 'canvas-confetti';
+
+    import { ref, watch } from "vue";
+    import confetti from "canvas-confetti";
+    import debounce from "@/src/lib/debounce";
+
 
     interface Props {
         postId: string;
@@ -52,20 +56,34 @@
     const isLoading = ref(true);
 
 
-    /** - `URL base del API de likes` */
+    /** 
+     * 
+     * --------------------------
+     * -----  `likesUrl()`  -----
+     * --------------------------
+     * URL base del API de likes
+     */
     const likesUrl = (): string => {
+        
         const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
         return `${base}/api/posts/likes/${encodeURIComponent(props.postId)}`;
     };
 
-    //  ------  Persiste en Turso cuando el usuario incrementa likes (no al GET inicial).  ------
-    watch(likeCount, (newVal) => {
+
+
+    /**
+     * -------------------------------
+     * -----  ` persistLikes()`  -----
+     * -------------------------------
+     * - persiste likes en Turso (debounced) 
+     */
+    const persistLikes = debounce((newVal: number) => {
         if (isLoading.value || likeClicks.value === 0) {
             return;
         }
 
-        console.log("New Likes => ", newVal);
+        //console.log("New Likes => ", newVal);
 
         const clicksToSave = likeClicks.value;
         likeClicks.value = 0;
@@ -77,9 +95,21 @@
             },
             body: JSON.stringify({ likes: clicksToSave }),
         });
+    }, 500);
+
+
+
+    watch(likeCount, (newVal) => {
+        persistLikes(newVal);
     });
 
 
+    /**
+     * ---------------------------
+     * -----  ` likePost()`  -----
+     * ---------------------------
+     * Incrementa el contador de likes y persiste en Turso.
+     */
     const likePost = () => {
         
         console.log("likePost");
@@ -97,6 +127,13 @@
     }
 
 
+    /**
+     * ----------------------------------
+     * -----  ` getCurrentLikes()`  -----
+     * ----------------------------------
+     * Obtiene el contador de likes actual desde el API.
+     * @async
+     */
     const getCurrentLikes = async () => {
         
         const resp = await fetch(likesUrl());
@@ -114,6 +151,7 @@
         isLoading.value = false;
 
     }
+
 
     getCurrentLikes();
 

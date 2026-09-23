@@ -38,6 +38,13 @@ export default defineConfig({
         prerenderEnvironment: "node",
     }),
 
+    vite: {
+        optimizeDeps: {
+            /** CJS; rompe el prebundle de Vite/SSR. El código usa lodash-es/debounce. */
+            exclude: ["lodash.debounce"],
+        },
+    },
+
     fonts: [
         {
             provider: fontProviders.local(),
