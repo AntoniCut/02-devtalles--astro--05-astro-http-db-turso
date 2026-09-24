@@ -6,6 +6,7 @@
 
 
 import { getGreeting } from "@/src/actions/greeting/get-greeting.actions";
+import { getPostLikes } from "@/src/actions/posts/get-post-likes.actions";
 
 
 /**
@@ -17,5 +18,6 @@ import { getGreeting } from "@/src/actions/greeting/get-greeting.actions";
 export const server = {
     
     getGreeting,
+    getPostLikes,
 
 };

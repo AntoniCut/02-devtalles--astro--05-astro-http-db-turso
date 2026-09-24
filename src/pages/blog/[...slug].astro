@@ -8,7 +8,9 @@
 
 import type { GetStaticPaths } from "astro";
 import BlogPost from "@/src/layouts/BlogPost.astro";
+import { LIKES_USE_SERVER_ACTIONS } from "@/src/consts";
 import LikeCounter from "@/src/components/likes/LikeCounter.vue";
+import LikeCounterAction from "@/src/components/likes/LikeCounterAction.vue";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
 
@@ -36,10 +38,13 @@ const { Content } = await render(post);
 
 <BlogPost {...post.data} id={post.id}>
     
-    <LikeCounter 
-        client:only="vue" 
-        postId={post.id} 
-    />
+    {
+        LIKES_USE_SERVER_ACTIONS ? (
+            <LikeCounterAction client:only="vue" postId={post.id} />
+        ) : (
+            <LikeCounter client:only="vue" postId={post.id} />
+        )
+    }
         
     <Content />
     
