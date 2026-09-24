@@ -40,6 +40,7 @@
     import { ref, watch } from "vue";
     import confetti from "canvas-confetti";
     import debounce from "@/src/lib/debounce";
+    import { actions } from "astro:actions";
 
 
     interface Props {
@@ -95,6 +96,7 @@
             },
             body: JSON.stringify({ likes: clicksToSave }),
         });
+
     }, 500);
 
 
@@ -110,13 +112,30 @@
      * ---------------------------
      * Incrementa el contador de likes y persiste en Turso.
      */
-    const likePost = () => {
+    const likePost = async () => {
         
         console.log("likePost");
 
         likeCount.value++;
         likeClicks.value++;
 
+        //  -----  implementacion de actions  -----
+        const { data, error } = await actions.getGreeting({ 
+            name: "John", 
+            age: 30, 
+            isActive: true 
+        });
+
+        if (error) {
+            console.error('error => ', error);
+            throw new Error(error.message);
+        }
+
+        console.log('data server actions => ', { data });
+
+
+
+        //  -----  implementacion de confetti  -----
         confetti({
             particleCount: 100,
             spread: 70,

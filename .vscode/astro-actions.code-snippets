@@ -1,0 +1,70 @@
+{
+    "Astro Server Action (defineAction)": {
+        "scope": "typescript",
+        "prefix": "astroaction",
+        "body": [
+            "/*",
+            "    *  -------------------------------------------------  *",
+            "    *  -----  ${TM_FILENAME}  --  /${RELATIVE_FILEPATH}  -----  *",
+            "    *  -------------------------------------------------  *",
+            "*/",
+            "",
+            "",
+            "import { defineAction } from \"astro:actions\";",
+            "import { z } from \"astro/zod\";",
+            "",
+            "",
+            "/**",
+            " * ---------------------------",
+            " * -----  `${1:myAction}`  -----",
+            " * ---------------------------",
+            " * ${2:Descripción breve de la action.}",
+            " */",
+            "export const ${1:myAction} = defineAction({",
+            "    ",
+            "    input: z.object({",
+            "        ${3:name: z.string(),}",
+            "    }),",
+            "    ",
+            "    handler: async ({ ${4:name} }) => {",
+            "        ",
+            "        $0",
+            "        ",
+            "        return ${5:result};",
+            "    },",
+            "",
+            "});"
+        ],
+        "description": "Nueva Astro server action en archivo *.actions.ts"
+    },
+    "Astro Server Action (registrar en index)": {
+        "scope": "typescript",
+        "prefix": "actionreg",
+        "body": [
+            "import { ${1:myAction} } from \"@/src/actions/${2:folder}/${3:my-action}.actions\";",
+            "",
+            "${1:myAction},"
+        ],
+        "description": "Import y entrada en export const server de src/actions/index.ts"
+    },
+    "Astro Server Action (llamada cliente)": {
+        "scope": "typescript,javascript,vue",
+        "prefix": "actioncall",
+        "body": [
+            "import { actions } from \"astro:actions\";",
+            "",
+            "const { data, error } = await actions.${1:getGreeting}({",
+            "    ${2:name: \"John\",}",
+            "});",
+            "",
+            "if (error) {",
+            "    console.error(\"action error =>\", error);",
+            "    throw new Error(error.message);",
+            "}",
+            "",
+            "console.log(\"action data =>\", data);",
+            "$0"
+        ],
+        "description": "await actions.* desde Vue o script de cliente (logs del handler van a la terminal de pnpm dev)"
+    }
+}
