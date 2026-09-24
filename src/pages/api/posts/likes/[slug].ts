@@ -20,10 +20,7 @@ export const prerender = false;
  * Incrementa likes en Turso (crea fila si no existe).
  * @async
  */
-const incrementPostLikes = async (
-    postId: string,
-    likes: number,
-): Promise<void> => {
+const incrementPostLikes = async (postId: string, likes: number,): Promise<void> => {
     
     const posts = await db
         .select()
@@ -48,6 +45,7 @@ const incrementPostLikes = async (
     post.likes = post.likes + likes;
 
     await db.update(Posts).set(post).where(eq(Posts.id, postId));
+    
 };
 
 

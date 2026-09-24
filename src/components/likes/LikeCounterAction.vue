@@ -44,60 +44,48 @@
 
     const props = defineProps<Props>();
 
-    console.log('props.postId => ', props.postId);
-
-
     const likeCount = ref(0);
     const likeClicks = ref(0);
     const isLoading = ref(true);
-
-
-    /** 
-     * 
-     * --------------------------
-     * -----  `likesUrl()`  -----
-     * --------------------------
-     * URL base del API de likes
-     */
-    const likesUrl = (): string => {
-        
-        const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-        return `${base}/api/posts/likes/${encodeURIComponent(props.postId)}`;
-    };
-
 
 
     /**
      * -------------------------------
      * -----  ` persistLikes()`  -----
      * -------------------------------
-     * - persiste likes en Turso (debounced) 
+     * Persiste clics acumulados con server action (debounced).
      */
-    const persistLikes = debounce((newVal: number) => {
+    const persistLikes = debounce(async () => {
+        
         if (isLoading.value || likeClicks.value === 0) {
             return;
         }
-
-        //console.log("New Likes => ", newVal);
-
+       
         const clicksToSave = likeClicks.value;
         likeClicks.value = 0;
 
-        void fetch(likesUrl(), {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ likes: clicksToSave }),
+        //  -----  respuesta de server action  -----
+        const { data, error } = await actions.updateLikes({
+            postId: props.postId,
+            increment: clicksToSave,
         });
+
+        if (error) {
+            console.error("updateLikes error =>", error);
+            likeClicks.value += clicksToSave;
+            return;
+        }
+
+        if (data) {
+            likeCount.value = data.likes;
+        }
 
     }, 500);
 
 
 
-    watch(likeCount, (newVal) => {
-        persistLikes(newVal);
+    watch(likeCount, () => {
+        void persistLikes();
     });
 
 
@@ -107,30 +95,11 @@
      * ---------------------------
      * Incrementa el contador de likes y persiste en Turso.
      */
-    const likePost = async () => {
+    const likePost = (): void => {
         
-        console.log("likePost");
-
         likeCount.value++;
         likeClicks.value++;
 
-        //  -----  implementacion de actions  -----
-        const { data, error } = await actions.getGreeting({ 
-            name: "John", 
-            age: 30, 
-            isActive: true 
-        });
-
-        if (error) {
-            console.error('error => ', error);
-            throw new Error(error.message);
-        }
-
-        console.log('data server actions => ', { data });
-
-
-
-        //  -----  implementacion de confetti  -----
         confetti({
             particleCount: 100,
             spread: 70,
@@ -145,11 +114,12 @@
      * ----------------------------------
      * -----  ` getCurrentLikes()`  -----
      * ----------------------------------
-     * Obtiene el contador de likes actual desde el API.
+     * Obtiene el contador de likes con server action.
      * @async
      */
     const getCurrentLikes = async () => {
         
+        //  -----  respuesta de server action  -----
         const { data, error } = await actions.getPostLikes(props.postId);
 
         if (error) {
@@ -157,15 +127,12 @@
             throw new Error(error.message);
         }
 
-        console.log('data server actions => ', { data });
-
-        likeCount.value = data.likes;
+        likeCount.value = data?.likes ?? 0;
         isLoading.value = false;
-        
+
     }
 
-
-    getCurrentLikes();
+    void getCurrentLikes();
 
 
 

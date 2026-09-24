@@ -7,7 +7,7 @@
 
 import { defineAction } from "astro:actions";
 import { z } from "astro/zod";
-import { db, eq, Posts } from "astro:db";
+import { readPostLikes } from "@/src/actions/posts/post-likes.helpers";
 
 
 /**
@@ -20,21 +20,6 @@ export const getPostLikes = defineAction({
     
     input: z.string(),
     
-    handler: async (postId) => {
-        
-        const [posts] = await db
-            .select()
-            .from(Posts)
-            .where(eq(Posts.id, postId))
-            .limit(1);
-
-        if (!posts) {
-            return { likes: 0 };
-        }
-
-        return {
-            likes: posts.likes,
-        }
-    },
+    handler: async (postId) => readPostLikes(postId),
 
 });
