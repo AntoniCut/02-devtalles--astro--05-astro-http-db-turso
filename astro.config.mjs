@@ -21,6 +21,17 @@ const site = process.env.SITE ?? "https://example.com";
 const base = process.env.BASE ?? "/";
 
 /**
+ * `pnpm dev:local` → `astro dev` sin `--remote`: SQLite `.astro/content.db` en Node.
+ * El worker de Cloudflare no puede usar URLs `file:` con el cliente libSQL web.
+ */
+const astroCliArgs = process.argv.slice(2);
+
+const isDevServer =
+    astroCliArgs[0] === "dev" && astroCliArgs[1] !== "stop";
+
+    const localDbDev = isDevServer && !astroCliArgs.includes("--remote");
+
+/**
  * ------------------------------
  * -----  `defineConfig()`  -----
  * ------------------------------
@@ -29,14 +40,23 @@ const base = process.env.BASE ?? "/";
 export default defineConfig({
     site,
     base,
-    integrations: [mdx(), sitemap(), vue(), db({ mode: "web" })],
+    integrations: [
+        mdx(),
+        sitemap(),
+        vue(),
+        db(localDbDev ? undefined : { mode: "web" }),
+    ],
 
     //output: "server",
 
-    adapter: cloudflare({
-        /** Evita conflicto @astrojs/vue resolve.external vs validación del plugin de Cloudflare en prerender. */
-        prerenderEnvironment: "node",
-    }),
+    ...(localDbDev
+        ? {}
+        : {
+              adapter: cloudflare({
+                  /** Evita conflicto @astrojs/vue resolve.external vs validación del plugin de Cloudflare en prerender. */
+                  prerenderEnvironment: "node",
+              }),
+          }),
 
     vite: {
         optimizeDeps: {

@@ -77,7 +77,7 @@ Required GitHub repository secrets:
 
 Run `pnpm astro db push --remote` once before the first deploy to sync the remote schema.
 
-`db()` uses `mode: "web"` in `astro.config.mjs` for Cloudflare compatibility.
+`db({ mode: "web" })` solo con `astro dev --remote`, `build --remote` y deploy. `pnpm dev:local` (`astro dev` sin `--remote`) omite el adapter Cloudflare y usa SQLite en Node (`.astro/content.db`); el worker no soporta URLs `file:`.
 
 ## Documentation
 

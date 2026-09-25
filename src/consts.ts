@@ -9,7 +9,7 @@ import type { SiteMeta } from "@/src/interfaces/types";
 
 
 /** - `título global del sitio` */
-export const SITE_TITLE = "Astro Blog";
+export const SITE_TITLE = "05 - Astro HTTP DB Turso";
 
 /** - `descripción global del sitio` */
 export const SITE_DESCRIPTION = "Welcome to my website!";

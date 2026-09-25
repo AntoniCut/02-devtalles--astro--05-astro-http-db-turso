@@ -60,16 +60,20 @@ Los textos largos de cada script están también en `package.json` → `scriptsD
 | Comando | Acción |
 | :------ | :----- |
 | `pnpm install` | Instala dependencias (aplica el parche de `@astrojs/db`) |
-| `pnpm dev` | Dev en `http://localhost:4321` con **Turso** (`astro dev --remote`). Modo habitual para API y likes. Requiere `.env`. |
-| `pnpm dev:local` | Dev en `:4321` con SQLite local (`.astro/content.db`), sin Turso |
-| `pnpm db:push` | Sincroniza el esquema de `db/config.ts` en **Turso** (`astro db push --remote`) |
-| `pnpm db:seed` | Ejecuta `db/seed.dev.ts` en **Turso** (Clients + Posts desde el blog) |
-| `pnpm db:seed:local` | Mismo seed en la base **local** (`astro db execute db/seed.dev.ts`) |
-| `pnpm build` | `astro build` sin `--remote`. Con Cloudflare + Astro DB suele fallar; no uses este comando para desplegar |
-| `pnpm build:remote` | Build de producción contra **Turso** (`astro build --remote`) → `./dist/` |
-| `pnpm preview` | Sirve el último build en `http://localhost:4322` |
-| `pnpm deploy` | `pnpm build:remote` + `wrangler deploy` al worker de Cloudflare |
-| `pnpm astro …` | CLI de Astro (ej. `pnpm astro db push --remote`) |
+| **Local** (`.astro/content.db`) | |
+| `pnpm dev:local` | Dev en `:4321` con SQLite local, sin Turso |
+| `pnpm db:push:local` | Esquema de `db/config.ts` en la base **local** |
+| `pnpm db:seed:local` | `db/seed.dev.ts` en la base **local** |
+| **Turso / producción** | |
+| `pnpm dev` | Dev en `:4321` con **Turso** (`--remote`). Requiere `.env` |
+| `pnpm db:push` | Esquema en **Turso** (`--remote`) |
+| `pnpm db:seed` | Seed en **Turso** |
+| `pnpm build:remote` | Build contra **Turso** → `./dist/` |
+| `pnpm deploy` | `build:remote` + `wrangler deploy` |
+| `pnpm preview` | Sirve el último build en `:4322` |
+| **Otros** | |
+| `pnpm build` | `astro build` sin `--remote`; no usar para desplegar |
+| `pnpm astro …` | CLI de Astro |
 | `pnpm format` | Prettier + `scripts/post-prettier-style.mjs` |
 | `pnpm format:check` | Comprueba formato sin modificar archivos |
 
@@ -123,7 +127,7 @@ No uses el prefijo `PUBLIC_` en estas variables.
 | Modo | Comandos | Base de datos |
 | :--- | :------- | :------------ |
 | Desarrollo habitual (API, Turso) | `pnpm dev`, `pnpm db:push`, `pnpm db:seed` | Remota (Turso) — requiere `.env` |
-| Desarrollo solo local | `pnpm dev:local`, `pnpm db:seed:local` | `.astro/content.db` (el esquema local se recrea al arrancar `dev:local`; `db push` del CLI apunta a remoto en este repo) |
+| Desarrollo solo local | `pnpm dev:local`, `pnpm db:seed:local` | `.astro/content.db`. `dev:local` arranca Astro en **Node** (sin worker Cloudflare) para que la API de likes pueda usar SQLite `file:`; reinicia el servidor tras cambiar `astro.config.mjs`. |
 | Producción / CI | `pnpm build:remote`, `pnpm deploy` | Turso + Cloudflare Worker |
 
 ### Flujo de desarrollo
