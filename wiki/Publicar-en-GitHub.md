@@ -9,6 +9,20 @@ Esta carpeta `wiki/` del proyecto es la **fuente versionada**. Sincronízala con
 1. Abre https://github.com/AntoniCut/02-devtalles--astro--05-astro-http-db-turso/settings
 2. **Features** → marca **Wikis**
 3. (Opcional) Restringe edición solo a colaboradores
+4. Abre la pestaña **Wiki** del repo y, si GitHub lo pide, **Create the first page** (puede ser un Home vacío). Sin este paso, a veces `*.wiki.git` aún no existe.
+
+## Error «Repository not found» al clonar
+
+GitHub devuelve ese mensaje cuando:
+
+| Causa | Qué hacer |
+| :---- | :-------- |
+| Wikis desactivadas | Actívalas en Settings → Features |
+| Wiki nunca inicializada | Crea la primera página en la pestaña Wiki |
+| Repo privado sin login | Autentica Git (`gh auth login`, SSH o credential helper) con el mismo usuario que tiene acceso |
+| URL distinta a `origin` | El script deduce el remoto wiki desde `git remote get-url origin` (HTTPS o SSH) |
+
+Tras corregir lo anterior, ejecuta de nuevo `pnpm wiki:push`. Si el clone falla pero ya hay Wikis activas, el script intenta un **push inicial** con el contenido de `wiki/`.
 
 ## 2. Publicar con el script
 
