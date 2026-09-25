@@ -4,7 +4,6 @@
     *  -------------------------------------------  *
  */
 
-
 import type { SiteMeta } from "@/src/interfaces/types";
 
 
@@ -43,7 +42,6 @@ export const LIKES_USE_SERVER_ACTIONS =
  * @returns Ruta absoluta incluyendo el base del proyecto.
  */
 export const withBase = (path: string = "/"): string => {
-    
     /** - `base configurado en Astro, siempre con / final` */
     const base = import.meta.env.BASE_URL.endsWith("/")
         ? import.meta.env.BASE_URL
@@ -56,5 +54,4 @@ export const withBase = (path: string = "/"): string => {
 
     //  -----  si la ruta no es la raíz o no está vacía, retorna la ruta absoluta  -----
     return `${base}${path.replace(/^\//, "")}`;
-    
 };

@@ -12,8 +12,12 @@ import BaseHead from "@/src/components/BaseHead.astro";
 import Footer from "@/src/components/Footer.astro";
 import FormattedDate from "@/src/components/FormattedDate.astro";
 import Header from "@/src/components/Header.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/src/consts";
+import { SITE_TITLE } from "@/src/consts";
 
+
+const pageTitle = `Blog — ${SITE_TITLE}`;
+const pageDescription =
+    "Blog de ejemplo para el proyecto 05 - Astro HTTP DB Turso.";
 
 //export const prerender = false;
 
@@ -27,7 +31,7 @@ const posts = (await getCollection("blog")).sort(
 <!doctype html>
 <html lang="es">
     <head>
-        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+        <BaseHead title={pageTitle} description={pageDescription} />
 
         <style>
             main {

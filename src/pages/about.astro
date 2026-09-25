@@ -7,11 +7,12 @@
  */
 
 import AboutHeroImage from "@/src/assets/blog-placeholder-about.jpg";
-import Layout from "@/src/layouts/BlogPost.astro";
+import BlogPost from "@/src/layouts/BlogPost.astro";
 
 ---
 
-<Layout
+<BlogPost
+    id="about"
     title="About Me"
     description="Lorem ipsum dolor sit amet"
     pubDate={new Date("August 08 2021")}
@@ -81,4 +82,4 @@ import Layout from "@/src/layouts/BlogPost.astro";
         feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet
         nibh praesent tristique magna.
     </p>
-</Layout>
+</BlogPost>

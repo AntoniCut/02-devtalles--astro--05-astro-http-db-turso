@@ -2,8 +2,7 @@
     *  -----------------------------------------------------------------------------------  *
     *  -----  update-likes.action.ts  --  /src/actions/posts/update-likes.action.ts  -----  *
     *  -----------------------------------------------------------------------------------  *
-*/
-
+ */
 
 import { defineAction } from "astro:actions";
 import { z } from "astro/zod";
@@ -18,18 +17,15 @@ import { db, eq, Posts } from "astro:db";
  * Action para actualizar los likes de un post.
  */
 export const updateLikes = defineAction({
-    
     input: z.object({
         postId: z.string(),
         increment: z.number(),
     }),
-    
+
     handler: async ({ postId, increment }) => {
-        
         const { likes, exists } = await readPostLikes(postId);
 
         if (!exists) {
-
             const newPost = {
                 id: postId,
                 title: "Post not found",
@@ -48,5 +44,4 @@ export const updateLikes = defineAction({
 
         return { likes: nextLikes };
     },
-
 });

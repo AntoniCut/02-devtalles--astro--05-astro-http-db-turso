@@ -122,7 +122,7 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
                 path: "/api/posts/likes/:slug",
                 title: "Obtener likes de un post",
                 description:
-                    "Devuelve `{ id, title, likes }`. Si el slug no está en Turso, responde 200 con `title: \"Post not found\"` y `likes: 0` (sin insertar).",
+                    'Devuelve `{ id, title, likes }`. Si el slug no está en Turso, responde 200 con `title: "Post not found"` y `likes: 0` (sin insertar).',
                 mode: "ssr",
                 relatedLinks: [
                     {

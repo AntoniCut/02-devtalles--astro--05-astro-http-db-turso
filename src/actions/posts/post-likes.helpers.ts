@@ -4,7 +4,6 @@
     *  -------------------------------------------------------------------------------------  *
  */
 
-
 import { db, eq, Posts } from "astro:db";
 
 
@@ -14,15 +13,15 @@ export interface PostLikesState {
     exists: boolean;
 }
 
-
 /**
  * ---------------------------------
  * -----  `readPostLikes()`  -----
  * ---------------------------------
  * Lee likes de la tabla Posts por id/slug.
  */
-export const readPostLikes = async (postId: string): Promise<PostLikesState> => {
-    
+export const readPostLikes = async (
+    postId: string,
+): Promise<PostLikesState> => {
     const [post] = await db
         .select()
         .from(Posts)

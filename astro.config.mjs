@@ -1,11 +1,8 @@
 /*
-    *  -----------------------------------------------------  *
-    *  -----  astro.config.mjs  --  /astro.config.mjs  -----  *
-    *  -----------------------------------------------------  *
+ *  -----------------------------------------------------  *
+ *  -----  astro.config.mjs  --  /astro.config.mjs  -----  *
+ *  -----------------------------------------------------  *
  */
-
-/// <reference path="./src/interfaces/types.d.js" />
-/// <reference path="./src/interfaces/global.d.ts" />
 
 // @ts-check
 
@@ -16,7 +13,6 @@ import sitemap from "@astrojs/sitemap";
 import vue from "@astrojs/vue";
 import { defineConfig, fontProviders } from "astro/config";
 
-
 const site = process.env.SITE ?? "https://example.com";
 const base = process.env.BASE ?? "/";
 
@@ -26,10 +22,9 @@ const base = process.env.BASE ?? "/";
  */
 const astroCliArgs = process.argv.slice(2);
 
-const isDevServer =
-    astroCliArgs[0] === "dev" && astroCliArgs[1] !== "stop";
+const isDevServer = astroCliArgs[0] === "dev" && astroCliArgs[1] !== "stop";
 
-    const localDbDev = isDevServer && !astroCliArgs.includes("--remote");
+const localDbDev = isDevServer && !astroCliArgs.includes("--remote");
 
 /**
  * ------------------------------

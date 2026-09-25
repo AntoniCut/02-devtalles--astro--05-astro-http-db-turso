@@ -82,6 +82,7 @@ const readBlogPosts = async (): Promise<BlogSeedPost[]> => {
  * -----  `seed()`  -----
  * ----------------------
  * - Inserta clientes y posts de ejemplo en la base de datos.
+ * @async
  */
 const seed = async (): Promise<void> => {
     await db.delete(Clients);
