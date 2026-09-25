@@ -33,7 +33,8 @@
         "build": "astro build",
         "astro": "astro",
         "format": "prettier --write \"**/*.{js,ts,astro,mjs}\" && node scripts/post-prettier-style.mjs",
-        "format:check": "prettier --check \"**/*.{js,ts,astro,mjs}\""
+        "format:check": "prettier --check \"**/*.{js,ts,astro,mjs}\"",
+        "wiki:push": "./scripts/sync-github-wiki.sh"
     },
     "dependencies": {
         "@astrojs/cloudflare": "^13.7.0",

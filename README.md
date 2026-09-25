@@ -2,6 +2,16 @@
 
 Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB** y **Turso** para el curso.
 
+## Wiki
+
+Documentación ampliada en la carpeta [`wiki/`](wiki/Home.md) (compatible con [GitHub Wiki](https://github.com/AntoniCut/02-devtalles--astro--05-astro-http-db-turso/wiki)). Tras activar Wikis en el repositorio, publica con:
+
+```bash
+./scripts/sync-github-wiki.sh
+```
+
+Instrucciones detalladas: [wiki/Publicar-en-GitHub.md](wiki/Publicar-en-GitHub.md).
+
 ## Stack
 
 - **Astro** 6.4.x (requerido para `@astrojs/db`)
