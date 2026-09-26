@@ -15,10 +15,9 @@ Colección principal: `postman/likes.postman_collection.json`.
 
 CRUD SSR bajo `/api/clients/`:
 
-- `GET /api/clients/list`
-- `GET /api/clients/:id`
-- `POST /api/clients/mutate`
-- `PUT|PATCH /api/clients/mutations/:id`
+- `GET /api/clients`
+- `POST /api/clients`
+- `GET|PUT|PATCH|DELETE /api/clients/:id`
 
 Colección: `postman/clients.postman_collection.json`.
 

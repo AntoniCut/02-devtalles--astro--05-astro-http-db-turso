@@ -1,7 +1,7 @@
 /*
-    *  -------------------------------------------------------------  *
-    *  -----  mutate.ts  --  /src/pages/api/clients/mutate.ts  -----  *
-    *  -------------------------------------------------------------  *
+    *  -----------------------------------------------------------  *
+    *  -----  index.ts  --  /src/pages/api/clients/index.ts  -----  *
+    *  -----------------------------------------------------------  *
  */
 
 import type { APIRoute } from "astro";
@@ -10,20 +10,33 @@ import { parseClientInput } from "@/src/pages/api/clients/_helpers";
 import { jsonResponse, parseJsonBody } from "@/src/pages/api/posts/_helpers";
 
 
-/** - `modo ssr: las mutaciones se ejecutan en el servidor en cada request` */
+/** - `modo ssr: la colección se ejecuta en el servidor en cada request` */
 export const prerender = false;
 
 /**
- * -----------------------------------------
+ * ---------------------
+ * -----  `GET()`  -----
+ * ---------------------
+ * - Devuelve todos los clientes de la tabla Clients.
+ */
+export const GET: APIRoute = async () => {
+    /** - `SELECT * FROM clients` */
+    const clients = await db.select().from(Clients);
+
+    return jsonResponse(clients);
+};
+
+/**
+ * ---------------------------------
  * -----  `POST({ request })`  -----
- * -----------------------------------------
+ * ---------------------------------
  * - Crea un nuevo cliente en la tabla Clients.
  */
 export const POST: APIRoute = async ({ request }) => {
     /** - `parsear el body de la request` */
     const body = await parseJsonBody(request);
 
-    //  -----  Si el body no es válido, devolver un error 400  -----
+    //  -----  si el body no es válido, devolver un error 400  -----
     if (body instanceof Response) {
         return body;
     }
@@ -31,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
     /** - `parsear los datos del cliente` */
     const input = parseClientInput(body);
 
-    //  -----  Si los datos del cliente no son válidos, devolver un error 400  -----
+    //  -----  si los datos del cliente no son válidos, devolver un error 400  -----
     if (input instanceof Response) {
         return input;
     }
@@ -39,6 +52,5 @@ export const POST: APIRoute = async ({ request }) => {
     /** - `crear el cliente` */
     const created = await db.insert(Clients).values(input).returning();
 
-    //  -----  Devolver el cliente creado en formato JSON  -----
     return jsonResponse(created[0], 201);
 };

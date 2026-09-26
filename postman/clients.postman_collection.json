@@ -52,7 +52,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/list"
+                            "raw": "{{baseUrl}}/api/clients"
                         },
                         "description": "Devuelve todos los registros de la tabla Clients."
                     },
@@ -137,7 +137,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutate"
+                            "raw": "{{baseUrl}}/api/clients"
                         },
                         "description": "Inserta un cliente de prueba y guarda su id en clientId. No toca los seed 1–5."
                     },
@@ -189,7 +189,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}"
+                            "raw": "{{baseUrl}}/api/clients/{{testClientId}}"
                         },
                         "description": "Actualiza todos los campos del cliente de prueba."
                     },
@@ -236,7 +236,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}"
+                            "raw": "{{baseUrl}}/api/clients/{{testClientId}}"
                         },
                         "description": "Actualiza solo isActive del cliente de prueba."
                     },
@@ -314,7 +314,7 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{testClientId}}"
+                            "raw": "{{baseUrl}}/api/clients/{{testClientId}}"
                         },
                         "description": "Borra el cliente de prueba. No requiere body."
                     },
@@ -413,7 +413,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutate"
+                            "raw": "{{baseUrl}}/api/clients"
                         },
                         "description": "name vacío o solo espacios → 400."
                     },
@@ -455,7 +455,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutate"
+                            "raw": "{{baseUrl}}/api/clients"
                         },
                         "description": "age negativo → 400."
                     },
@@ -497,7 +497,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/{{seedClientId}}"
+                            "raw": "{{baseUrl}}/api/clients/{{seedClientId}}"
                         },
                         "description": "PATCH {} sobre el seed id 1. Falla validación antes de escribir."
                     },
@@ -534,7 +534,7 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutations/99999"
+                            "raw": "{{baseUrl}}/api/clients/99999"
                         },
                         "description": "DELETE de un id que no existe → 404."
                     },
@@ -574,7 +574,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/clients/mutate"
+                            "raw": "{{baseUrl}}/api/clients"
                         },
                         "description": "Body JSON malformado → 400 Invalid JSON body."
                     },

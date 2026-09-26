@@ -176,7 +176,7 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "GET",
-                path: "/api/clients/list",
+                path: "/api/clients",
                 title: "Listar clientes",
                 description:
                     "Devuelve todos los registros de la tabla Clients.",
@@ -205,7 +205,7 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "POST",
-                path: "/api/clients/mutate",
+                path: "/api/clients",
                 title: "Crear cliente",
                 description: "Inserta un nuevo cliente en Astro DB.",
                 mode: "ssr",
@@ -225,7 +225,7 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "PUT",
-                path: "/api/clients/mutations/1",
+                path: "/api/clients/1",
                 title: "Reemplazar cliente (PUT)",
                 description: "Actualiza todos los campos del cliente indicado.",
                 mode: "ssr",
@@ -238,7 +238,7 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
             },
             {
                 method: "PATCH",
-                path: "/api/clients/mutations/1",
+                path: "/api/clients/1",
                 title: "Actualizar cliente parcial (PATCH)",
                 description: "Actualiza solo los campos enviados en el body.",
                 mode: "ssr",
@@ -256,7 +256,7 @@ export const CLIENTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "DELETE",
-                path: "/api/clients/mutations/1",
+                path: "/api/clients/1",
                 title: "Eliminar cliente",
                 description: "No requiere body. El id va en la URL.",
                 mode: "ssr",
