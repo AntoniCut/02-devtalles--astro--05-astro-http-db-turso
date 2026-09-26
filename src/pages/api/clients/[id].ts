@@ -7,20 +7,25 @@
 import type { APIRoute } from "astro";
 import { Clients, db, eq } from "astro:db";
 import {
+
+
     getClientById,
     parseClientId,
     parseClientInput,
     parseClientPatchInput,
 } from "@/src/pages/api/clients/_helpers";
 import {
+
+
     errorResponse,
     jsonResponse,
     parseJsonBody,
 } from "@/src/pages/api/posts/_helpers";
 
-
 /** - `modo ssr: el cliente se resuelve en el servidor en cada request` */
 export const prerender = false;
+
+
 
 /**
  * -------------------------------
@@ -29,10 +34,13 @@ export const prerender = false;
  * - Devuelve un cliente concreto por id.
  */
 export const GET: APIRoute = async ({ params }) => {
-    /** - `parsear el id del cliente` */
+
+    /** - `id numérico del cliente` */
     const clientId = parseClientId(params.id);
 
+    //  -----  si el id del cliente no es válido, devolver un error 400  -----
     if (clientId instanceof Response) {
+        //  -----  devolver el error del id  -----
         return clientId;
     }
 
@@ -41,11 +49,16 @@ export const GET: APIRoute = async ({ params }) => {
 
     //  -----  si el cliente no existe, devolver un error 404  -----
     if (client instanceof Response) {
+        //  -----  devolver el error del cliente  -----
         return client;
     }
 
+    //  -----  devolver el cliente  -----
     return jsonResponse(client);
+
 };
+
+
 
 /**
  * ----------------------------------------
@@ -54,11 +67,13 @@ export const GET: APIRoute = async ({ params }) => {
  * - Reemplaza por completo los datos de un cliente.
  */
 export const PUT: APIRoute = async ({ params, request }) => {
+
     /** - `parsear el id del cliente` */
     const clientId = parseClientId(params.id);
 
     //  -----  si el id del cliente no es válido, devolver un error 400  -----
     if (clientId instanceof Response) {
+        //  -----  devolver el error del id  -----
         return clientId;
     }
 
@@ -67,6 +82,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     //  -----  si el cliente no existe, devolver un error 404  -----
     if (existing instanceof Response) {
+        //  -----  devolver el error del cliente  -----
         return existing;
     }
 
@@ -75,6 +91,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     //  -----  si el body no es válido, devolver un error 400  -----
     if (body instanceof Response) {
+        //  -----  devolver el error del body  -----
         return body;
     }
 
@@ -83,6 +100,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     //  -----  si los datos del cliente no son válidos, devolver un error 400  -----
     if (input instanceof Response) {
+        //  -----  devolver el error de validación  -----
         return input;
     }
 
@@ -93,8 +111,12 @@ export const PUT: APIRoute = async ({ params, request }) => {
         .where(eq(Clients.id, clientId))
         .returning();
 
+    //  -----  devolver el cliente reemplazado  -----
     return jsonResponse(updated[0]);
+
 };
+
+
 
 /**
  * ------------------------------------------
@@ -103,11 +125,13 @@ export const PUT: APIRoute = async ({ params, request }) => {
  * - Actualiza parcialmente los datos de un cliente.
  */
 export const PATCH: APIRoute = async ({ params, request }) => {
+
     /** - `parsear el id del cliente` */
     const clientId = parseClientId(params.id);
 
     //  -----  si el id del cliente no es válido, devolver un error 400  -----
     if (clientId instanceof Response) {
+        //  -----  devolver el error del id  -----
         return clientId;
     }
 
@@ -116,6 +140,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     //  -----  si el cliente no existe, devolver un error 404  -----
     if (existing instanceof Response) {
+        //  -----  devolver el error del cliente  -----
         return existing;
     }
 
@@ -124,6 +149,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     //  -----  si el body no es válido, devolver un error 400  -----
     if (body instanceof Response) {
+        //  -----  devolver el error del body  -----
         return body;
     }
 
@@ -132,6 +158,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     //  -----  si los datos del cliente no son válidos, devolver un error 400  -----
     if (patch instanceof Response) {
+        //  -----  devolver el error de validación  -----
         return patch;
     }
 
@@ -142,8 +169,12 @@ export const PATCH: APIRoute = async ({ params, request }) => {
         .where(eq(Clients.id, clientId))
         .returning();
 
+    //  -----  devolver el cliente actualizado  -----
     return jsonResponse(updated[0]);
+
 };
+
+
 
 /**
  * ----------------------------------
@@ -152,11 +183,13 @@ export const PATCH: APIRoute = async ({ params, request }) => {
  * - Elimina un cliente por id.
  */
 export const DELETE: APIRoute = async ({ params }) => {
+
     /** - `parsear el id del cliente` */
     const clientId = parseClientId(params.id);
 
     //  -----  si el id del cliente no es válido, devolver un error 400  -----
     if (clientId instanceof Response) {
+        //  -----  devolver el error del id  -----
         return clientId;
     }
 
@@ -168,12 +201,15 @@ export const DELETE: APIRoute = async ({ params }) => {
 
     //  -----  si el cliente no existe, devolver un error 404  -----
     if (deleted.length === 0) {
+        //  -----  responder que el cliente no existe  -----
         return errorResponse(`Client "${clientId}" not found`, 404);
     }
 
+    //  -----  confirmar el borrado  -----
     return jsonResponse({
         method: "DELETE",
         id: clientId,
         message: `Client "${clientId}" deleted`,
     });
+
 };

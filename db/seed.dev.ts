@@ -13,11 +13,24 @@ import { Clients, Posts, db } from "astro:db";
 // Turso (remoto): pnpm db:seed
 // SQLite local (tras `pnpm dev`): pnpm db:seed:local
 
-/** - `entrada del blog lista para insertar en posts` */
+
+
+/**
+ * ------------------------------------------
+ * -----  interface  -  `BlogSeedPost`  -----
+ * ------------------------------------------
+ * - `entrada del blog lista para insertar en posts`
+ */
 interface BlogSeedPost {
+
+    /** - `slug del post` */
     id: string;
+
+    /** - `título del post` */
     title: string;
 }
+
+
 
 /**
  * --------------------------------------------
@@ -26,56 +39,93 @@ interface BlogSeedPost {
  * - Extrae el título del frontmatter de un markdown.
  */
 const readFrontmatterTitle = (source: string): string => {
+
+    /** - `bloque frontmatter del markdown, si existe` */
     const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+
+    /** - `texto interior del frontmatter` */
     const block = frontmatter?.[1];
 
+    //  -----  si no hay frontmatter, abortar el seed  -----
     if (!block) {
         throw new Error("El markdown no tiene frontmatter");
     }
 
+    /** - `línea title del frontmatter` */
     const titleLine = block
         .split(/\r?\n/)
         .find((line) => line.startsWith("title:"));
 
+    //  -----  si no hay título, abortar el seed  -----
     if (!titleLine) {
         throw new Error("El markdown no tiene title");
     }
 
+    /** - `valor del título, con o sin comillas` */
     const value = titleLine.slice("title:".length).trim();
+
+    /** - `true si el título va entre comillas simples o dobles` */
     const quoted =
         (value.startsWith("'") && value.endsWith("'")) ||
         (value.startsWith('"') && value.endsWith('"'));
 
-    return quoted ? value.slice(1, -1) : value;
+    //  -----  si el título va entre comillas, quitarlas  -----
+    if (quoted) {
+        //  -----  devolver el título sin comillas  -----
+        return value.slice(1, -1);
+    }
+
+    //  -----  si el título no va entre comillas, devolverlo tal cual  -----
+    return value;
+
 };
+
+
 
 /**
  * -------------------------------
  * -----  `readBlogPosts()`  -----
  * -------------------------------
- * - Lee id y título de src/content/blog sin usar astro:content.
+ * - Lee el id y el título de los markdown de src/content/blog.
+ * @async
  */
 const readBlogPosts = async (): Promise<BlogSeedPost[]> => {
+
+    /** - `directorio de los markdown del blog` */
     const blogDir = path.join(process.cwd(), "src/content/blog");
+
+    /** - `nombres de archivo dentro del directorio` */
     const fileNames = await readdir(blogDir);
+
+    /** - `posts leídos del disco` */
     const posts: BlogSeedPost[] = [];
 
+    //  -----  recorrer cada archivo del blog  -----
     for (const fileName of fileNames) {
+        //  -----  omitir lo que no sea markdown  -----
         if (!fileName.endsWith(".md") && !fileName.endsWith(".mdx")) {
             continue;
         }
 
+        /** - `contenido del archivo markdown` */
         const source = await readFile(path.join(blogDir, fileName), "utf8");
+
+        /** - `slug del post, sin extensión` */
         const id = fileName.replace(/\.(md|mdx)$/, "");
 
+        //  -----  guardar el id y el título del post  -----
         posts.push({
             id,
             title: readFrontmatterTitle(source),
         });
     }
 
+    //  -----  devolver los posts leídos  -----
     return posts;
+
 };
+
+
 
 /**
  * ----------------------
@@ -85,8 +135,11 @@ const readBlogPosts = async (): Promise<BlogSeedPost[]> => {
  * @async
  */
 const seed = async (): Promise<void> => {
+
+    //  -----  vaciar la tabla de clientes  -----
     await db.delete(Clients);
 
+    //  -----  insertar los clientes de ejemplo  -----
     await db.insert(Clients).values([
         {
             id: 1,
@@ -120,11 +173,15 @@ const seed = async (): Promise<void> => {
         },
     ]);
 
+    /** - `posts del blog leídos desde el disco` */
     const posts = await readBlogPosts();
 
+    //  -----  vaciar la tabla de posts  -----
     await db.delete(Posts);
 
+    //  -----  insertar posts solo si el directorio tiene markdown  -----
     if (posts.length > 0) {
+        //  -----  insertar cada post con un número de likes aleatorio  -----
         await db.insert(Posts).values(
             posts.map((post) => ({
                 id: post.id,
@@ -134,7 +191,9 @@ const seed = async (): Promise<void> => {
         );
     }
 
+    //  -----  avisar de que el seed terminó  -----
     console.log("Seed function executed");
+
 };
 
 export default seed;

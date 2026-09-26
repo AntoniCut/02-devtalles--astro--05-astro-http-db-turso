@@ -11,8 +11,8 @@ import { z } from "astro/zod";
 /**
  * ---------------------------
  * -----  `getGreeting`  -----
- * ---------------------------  
- * Action para obtener un saludo.
+ * ---------------------------
+ * - Devuelve un saludo con el nombre, la edad y el estado.
  */
 export const getGreeting = defineAction({
     input: z.object({
@@ -21,11 +21,21 @@ export const getGreeting = defineAction({
         isActive: z.boolean(),
     }),
 
+    /**
+     * ------------------------------------------------
+     * -----  `handler({ name, age, isActive })`  -----
+     * ------------------------------------------------
+     * - Escribe el saludo y lo devuelve.
+     */
     handler: async ({ name, age, isActive }) => {
+
+        //  -----  escribir el saludo en la consola del servidor  -----
         console.log(
             `Hello, ${name}! You are ${age} years old and ${isActive ? "active" : "inactive"}!`,
         );
 
+        //  -----  devolver el saludo  -----
         return `Hello, ${name}! You are ${age} years old and ${isActive ? "active" : "inactive"}!`;
+
     },
 });

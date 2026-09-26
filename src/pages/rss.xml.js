@@ -21,9 +21,11 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "@/src/consts";
  * @return {Promise<Response>} - Response con el feed RSS.
  */
 export const GET = async (context) => {
+
     /** - `posts publicados en la colección blog` */
     const posts = await getCollection("blog");
 
+    //  -----  devolver el feed rss  -----
     return rss({
         title: SITE_TITLE,
         description: SITE_DESCRIPTION,
@@ -33,4 +35,5 @@ export const GET = async (context) => {
             link: `/blog/${post.id}/`,
         })),
     });
+
 };

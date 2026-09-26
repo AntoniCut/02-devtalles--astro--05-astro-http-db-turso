@@ -17,7 +17,7 @@
         "preview": "Previsualiza el último build en :4322.",
         "build": "astro build sin --remote. Con Cloudflare + Astro DB suele fallar; no desplegar con esto.",
         "astro": "CLI de Astro (pnpm astro …).",
-        "format": "Formatea JS/TS/Astro con Prettier y scripts/post-prettier-style.mjs.",
+        "format": "Prettier y después scripts/post-prettier-style.mjs: 1 línea en blanco entre instrucciones y entre variables; 3 entre función y función, entre variable y función, y antes y después de cada interfaz.",
         "format:check": "Comprueba formato sin modificar archivos."
     },
     "scripts": {

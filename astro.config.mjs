@@ -1,7 +1,7 @@
 /*
- *  -----------------------------------------------------  *
- *  -----  astro.config.mjs  --  /astro.config.mjs  -----  *
- *  -----------------------------------------------------  *
+    *  -----------------------------------------------------  *
+    *  -----  astro.config.mjs  --  /astro.config.mjs  -----  *
+    *  -----------------------------------------------------  *
  */
 
 // @ts-check
@@ -13,25 +13,22 @@ import sitemap from "@astrojs/sitemap";
 import vue from "@astrojs/vue";
 import { defineConfig, fontProviders } from "astro/config";
 
+
+/** - `url pública del sitio` */
 const site = process.env.SITE ?? "https://example.com";
+
+/** - `ruta base del proyecto` */
 const base = process.env.BASE ?? "/";
 
-/**
- * `pnpm dev:local` → `astro dev` sin `--remote`: SQLite `.astro/content.db` en Node.
- * El worker de Cloudflare no puede usar URLs `file:` con el cliente libSQL web.
- */
+/** - `argumentos con los que se lanzó el cli de astro` */
 const astroCliArgs = process.argv.slice(2);
 
+/** - `true si el comando actual es el servidor de desarrollo` */
 const isDevServer = astroCliArgs[0] === "dev" && astroCliArgs[1] !== "stop";
 
+/** - `true si el dev server usa sqlite local, sin --remote` */
 const localDbDev = isDevServer && !astroCliArgs.includes("--remote");
 
-/**
- * ------------------------------
- * -----  `defineConfig()`  -----
- * ------------------------------
- * Definir la configuración principal de Astro.
- */
 export default defineConfig({
     site,
     base,
@@ -39,11 +36,14 @@ export default defineConfig({
         mdx(),
         sitemap(),
         vue(),
+
+        //  -----  en dev local, astro db no usa el modo web  -----
         db(localDbDev ? undefined : { mode: "web" }),
     ],
 
     //output: "server",
 
+    //  -----  en dev local, omitir el adapter de cloudflare  -----
     ...(localDbDev
         ? {}
         : {

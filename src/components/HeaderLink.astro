@@ -11,15 +11,25 @@ import type { HTMLAttributes } from "astro/types";
 
 type Props = HTMLAttributes<"a">;
 
-//  -----  props del enlace  -----
+/** - `href, clase y resto de atributos del enlace` */
 const { href, class: className, ...props } = Astro.props;
 
-//  -----  calcular si la ruta está activa  -----
+/** - `ruta actual sin la base del proyecto` */
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
+
+/** - `ancla de la url actual` */
 const hash = Astro.url.hash;
+
+/** - `primer segmento de la ruta actual` */
 const subpath = pathname.match(/[^\/]+/g);
+
+/** - `href convertido a texto` */
 const hrefString = typeof href === "string" ? href : "";
+
+/** - `true si el enlace apunta a un ancla` */
 const isHashLink = hrefString.includes("#");
+
+/** - `true si este enlace corresponde a la ruta actual` */
 const isActive =
     href === pathname ||
     (href !== "/" && pathname.startsWith(`${href}/`)) ||

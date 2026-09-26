@@ -43,9 +43,20 @@
     import { actions } from "astro:actions";
 
 
+
+    /**
+     * -----------------------------------
+     * -----  interface  -  `Props`  -----
+     * -----------------------------------
+     * - `props del contador de likes`
+     */
     interface Props {
+
+        /** - `id del post` */
         postId: string;
     }
+
+
 
     const props = defineProps<Props>();
 

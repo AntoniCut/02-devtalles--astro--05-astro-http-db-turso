@@ -11,10 +11,10 @@ import { db, eq, Posts } from "astro:db";
 
 
 /**
- * ----------------------------
+ * ---------------------------
  * -----  `updateLikes`  -----
- * ----------------------------
- * Action para actualizar los likes de un post.
+ * ---------------------------
+ * - Actualiza los likes de un post en Turso.
  */
 export const updateLikes = defineAction({
     input: z.object({
@@ -22,26 +22,41 @@ export const updateLikes = defineAction({
         increment: z.number(),
     }),
 
+    /**
+     * ----------------------------------------------
+     * -----  `handler({ postId, increment })`  -----
+     * ----------------------------------------------
+     * - Suma el incremento a los likes y crea el post si no existe.
+     */
     handler: async ({ postId, increment }) => {
+
+        /** - `likes actuales y si el post ya existe` */
         const { likes, exists } = await readPostLikes(postId);
 
+        //  -----  si el post no existe, crear la fila  -----
         if (!exists) {
+            /** - `fila nueva de post sin likes` */
             const newPost = {
                 id: postId,
                 title: "Post not found",
                 likes: 0,
             };
 
+            //  -----  crear la fila del post  -----
             await db.insert(Posts).values(newPost);
         }
 
+        /** - `likes tras sumar el incremento` */
         const nextLikes = likes + increment;
 
+        //  -----  guardar los likes actualizados  -----
         await db
             .update(Posts)
             .set({ likes: nextLikes })
             .where(eq(Posts.id, postId));
 
+        //  -----  devolver los likes actualizados  -----
         return { likes: nextLikes };
+
     },
 });

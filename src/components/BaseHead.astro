@@ -15,16 +15,31 @@ import { FAVICON_VERSION, SITE_TITLE, withBase } from "@/src/consts";
 import { Font } from "astro:assets";
 
 
+
+/**
+ * -----------------------------------
+ * -----  interface  -  `Props`  -----
+ * -----------------------------------
+ * - `props de la cabecera de la página`
+ */
 interface Props {
+
+    /** - `título de la página` */
     title: string;
+
+    /** - `descripción de la página` */
     description: string;
+
+    /** - `imagen de la página` */
     image?: ImageMetadata;
 }
+
+
 
 /** - `url canónica de la página actual` */
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-//  -----  props del componente  -----
+/** - `título, descripción e imagen recibidos por props` */
 const { title, description, image = FallbackImage } = Astro.props;
 
 ---

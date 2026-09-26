@@ -14,19 +14,33 @@ import LikeCounterAction from "@/src/components/likes/LikeCounterAction.vue";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
 
+type Props = CollectionEntry<"blog">;
+
+/**
+ * --------------------------------
+ * -----  `getStaticPaths()`  -----
+ * --------------------------------
+ * - Genera una ruta estática por cada post del blog.
+ */
 export const getStaticPaths = (async () => {
+
+    /** - `posts de la colección blog` */
     const posts = await getCollection("blog");
 
+    //  -----  devolver una ruta por cada post  -----
     return posts.map((post) => ({
         params: { slug: post.id },
         props: post,
     }));
+
 }) satisfies GetStaticPaths;
 
-type Props = CollectionEntry<"blog">;
 
+
+/** - `post resuelto para esta ruta` */
 const post = Astro.props;
 
+/** - `componente de contenido renderizado del post` */
 const { Content } = await render(post);
 
 ---

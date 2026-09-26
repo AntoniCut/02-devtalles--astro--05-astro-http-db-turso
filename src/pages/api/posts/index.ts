@@ -12,6 +12,8 @@ import { jsonResponse, parseJsonBody } from "@/src/pages/api/posts/_helpers";
 /** - `modo ssr: el listado y el alta se ejecutan en el servidor en cada request` */
 export const prerender = false;
 
+
+
 /**
  * ---------------------
  * -----  `GET()`  -----
@@ -19,11 +21,16 @@ export const prerender = false;
  * - Devuelve todos los posts del blog en formato json.
  */
 export const GET: APIRoute = async () => {
-    /** - `colección blog` */
+
+    /** - `posts de la colección blog` */
     const posts = await getCollection("blog");
 
+    //  -----  devolver los posts  -----
     return jsonResponse(posts);
+
 };
+
+
 
 /**
  * ---------------------------------
@@ -32,14 +39,17 @@ export const GET: APIRoute = async () => {
  * - Simula la creación de un nuevo post (demo, sin persistencia).
  */
 export const POST: APIRoute = async ({ request }) => {
+
     /** - `parsear el body de la request` */
     const body = await parseJsonBody(request);
 
     //  -----  si el body no es válido, devolver un error 400  -----
     if (body instanceof Response) {
+        //  -----  devolver el error del body  -----
         return body;
     }
 
+    //  -----  devolver el post simulado  -----
     return jsonResponse(
         {
             method: "POST",
@@ -47,4 +57,5 @@ export const POST: APIRoute = async ({ request }) => {
         },
         201,
     );
+
 };
