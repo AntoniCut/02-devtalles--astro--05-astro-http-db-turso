@@ -1,95 +1,113 @@
-## Development
+## Desarrollo
 
-When starting the dev server, use background mode:
+Para arrancar el servidor en segundo plano:
 
 ```
 astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Gestiónalo con `astro dev stop`, `astro dev status` y `astro dev logs`.
 
-This project also exposes `pnpm dev` (port 4321) via `package.json`.
+Este proyecto expone estos scripts en `package.json` (puerto 4321):
 
-## Project context
+| Script | Destino |
+| :----- | :------ |
+| `pnpm dev` | Turso (`astro dev --remote`). Requiere `.env` |
+| `pnpm dev:local` | SQLite local (`.astro/content.db`) en Node, sin adapter Cloudflare |
 
-- **Astro 6.4.x** with `@astrojs/db` (deprecated in 6.4, removed in Astro 7)
+El worker de Cloudflare no abre URLs `file:`. `pnpm dev:local` omite el adapter y usa Node para que libSQL lea el archivo local. `db({ mode: "web" })` se usa en `astro dev --remote`, `build --remote` y en el deploy.
+
+## Contexto del proyecto
+
+- **Astro 6.4.x** con `@astrojs/db` (deprecado en 6.4, eliminado en Astro 7)
 - **Adapter:** `@astrojs/cloudflare`
-- **Database:** libSQL / Turso via Astro DB
-- **Schema:** `db/config.ts`
-- **Seed:** `db/seed.dev.ts` — run manually with `pnpm db:seed`
-- **Patch:** `patches/@astrojs__db@0.21.3.patch` — required for `build:remote` with Cloudflare
+- **Base de datos:** libSQL / Turso vía Astro DB
+- **Esquema:** `db/config.ts`
+- **Seed:** `db/seed.dev.ts`, a mano con `pnpm db:seed` o `pnpm db:seed:local`
+- **Parche:** `patches/@astrojs__db@0.21.3.patch`, necesario para `build:remote` con Cloudflare
 
-### Astro DB seed workaround
+### Seed de Astro DB
 
-Do **not** create `db/seed.ts`. Astro DB auto-runs that filename on `dev` startup and crashes on Astro 6.4 (`environment.runner` is undefined). Keep seed logic in `db/seed.dev.ts` and use `pnpm db:seed`.
+El seed vive solo en `db/seed.dev.ts`. Un archivo `db/seed.ts` hace que Astro DB lo ejecute al arrancar `dev` y falle en Astro 6.4 (`environment.runner` es `undefined`).
 
-### Database scripts
+### Scripts de base de datos
 
-| Script           | Command                              |
-| :--------------- | :----------------------------------- |
-| `pnpm db:push`   | Sync table schema to local DB        |
-| `pnpm db:seed`   | Run `db/seed.dev.ts` manually        |
-| `pnpm build:remote` | Production build against Turso    |
+| Script | Qué hace |
+| :----- | :------- |
+| `pnpm db:push:local` | Esquema en la base local |
+| `pnpm db:seed:local` | Ejecuta `db/seed.dev.ts` en la base local |
+| `pnpm db:push` | Esquema en Turso (`--remote`) |
+| `pnpm db:seed` | Ejecuta `db/seed.dev.ts` en Turso (`--remote`) |
+| `pnpm build:remote` | Build de producción contra Turso |
 
-Remote Turso commands append `--remote` (e.g. `pnpm astro db push --remote`).
+Los comandos remotos llevan `--remote` (por ejemplo `pnpm astro db push --remote`). `pnpm db:push` y `pnpm db:seed` ya lo incluyen. Esos comandos y `build:remote` necesitan las credenciales de Turso en `.env`.
 
-Local dev (`pnpm dev`, `pnpm db:push`) uses a local SQLite file and does **not** need Turso. Remote commands and `build:remote` require Turso credentials in `.env`.
+### API
 
-### Turso setup
+Rutas SSR (`prerender = false`). Los helpers viven en `_helpers.ts` y Astro no los publica como endpoint.
 
-The database is hosted on [Turso Cloud](https://app.turso.tech), not locally. Create it in the dashboard (or via `turso` CLI), then copy:
+| Recurso | Colección | Elemento |
+| :------ | :-------- | :------- |
+| Clients | `GET` y `POST` `/api/clients` (`index.ts`) | `GET`, `PUT`, `PATCH` y `DELETE` `/api/clients/:id` (`[id].ts`) |
+| Posts | `GET` y `POST` `/api/posts` (`index.ts`) | `GET`, `PUT`, `PATCH` y `DELETE` `/api/posts/:slug` (`[slug].ts`) |
+| Likes | | `GET` y `POST` `/api/posts/likes/:slug` |
+
+Las mutaciones de posts son una demo y no persisten. Likes y clients sí escriben en Astro DB. La documentación de la app está en `src/data/api-endpoints.ts` (página `/api`). Las colecciones de Postman están en `postman/`.
+
+### Turso
+
+La base está en [Turso Cloud](https://app.turso.tech). Créala en el panel (o con la CLI `turso`) y copia:
 
 - `ASTRO_DB_REMOTE_URL` — `libsql://...turso.io`
-- `ASTRO_DB_APP_TOKEN` — from **Create Token** in the database panel
+- `ASTRO_DB_APP_TOKEN` — desde **Create Token** en el panel de la base
 
-| File | Purpose |
-| :--- | :------ |
-| `.env` | Local remote commands: `db push --remote`, `build:remote`, `deploy` |
-| `.env.production` | Production build vars: `SITE`, `BASE`, plus Turso credentials |
+| Archivo | Uso |
+| :------ | :-- |
+| `.env` | Comandos locales contra Turso: `db push --remote`, `build:remote`, `deploy` |
+| `.env.production` | Build de producción: `SITE`, `BASE` y credenciales Turso |
 
-Do not use the `PUBLIC_` prefix for Turso vars.
+Estas variables van sin el prefijo `PUBLIC_`.
 
-### Cloudflare build patch
+### Parche de build en Cloudflare
 
-`astro build --remote` fails on `@astrojs/db@0.21.3` + `@astrojs/cloudflare` with `Invalid URL string` ([#16738](https://github.com/withastro/astro/issues/16738)). `db push --remote` may still succeed — this is not a credentials issue.
+`astro build --remote` falla con `@astrojs/db@0.21.3` y `@astrojs/cloudflare` (`Invalid URL string`, [#16738](https://github.com/withastro/astro/issues/16738)). `db push --remote` puede funcionar igual: el fallo es del build, y las credenciales pueden estar bien.
 
-This repo applies the upstream fix ([#16939](https://github.com/withastro/astro/pull/16939)) via `pnpm patch`:
+Este repo aplica el arreglo de [#16939](https://github.com/withastro/astro/pull/16939) con `pnpm patch`:
 
-- Patch file: `patches/@astrojs__db@0.21.3.patch`
-- Config: `pnpm-workspace.yaml` → `patchedDependencies`
+- Parche: `patches/@astrojs__db@0.21.3.patch`
+- Configuración: `pnpm-workspace.yaml` → `patchedDependencies`
 
-Applied automatically on `pnpm install`. Remove the patch when a released `@astrojs/db` version includes the fix.
+Se aplica solo con `pnpm install`. Quita el parche cuando una versión publicada de `@astrojs/db` incluya el arreglo.
 
 ### CI / deploy
 
-GitHub Actions (`.github/workflows/deploy.yml`) on push to `master`:
+GitHub Actions (`.github/workflows/deploy.yml`) en cada push a `master`:
 
 1. `pnpm install --frozen-lockfile`
-2. `pnpm build:remote` with Turso secrets
-3. `wrangler deploy`
+2. `pnpm build:remote` con los secrets de Turso
+3. Comprueba que `wrangler.jsonc` y `dist/server/wrangler.json` despliegan el mismo worker
+4. `wrangler deploy`
 
-Required GitHub repository secrets:
+Secrets del repositorio:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 - `ASTRO_DB_REMOTE_URL`
 - `ASTRO_DB_APP_TOKEN`
 
-Run `pnpm astro db push --remote` once before the first deploy to sync the remote schema.
+Antes del primer deploy, sincroniza el esquema remoto una vez: `pnpm astro db push --remote`.
 
-`db({ mode: "web" })` solo con `astro dev --remote`, `build --remote` y deploy. `pnpm dev:local` (`astro dev` sin `--remote`) omite el adapter Cloudflare y usa SQLite en Node (`.astro/content.db`); el worker no soporta URLs `file:`.
+## Documentación
 
-## Documentation
+Documentación de Astro: https://docs.astro.build
 
-Full documentation: https://docs.astro.build
+Consulta estas guías antes de tareas relacionadas:
 
-Consult these guides before working on related tasks:
-
-- [Astro DB (v5 docs)](https://v5.docs.astro.build/en/guides/astro-db/)
-- [Turso & Astro](https://docs.astro.build/en/guides/backend/turso/)
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- [Astro DB (docs v5)](https://v5.docs.astro.build/en/guides/astro-db/)
+- [Turso y Astro](https://docs.astro.build/en/guides/backend/turso/)
+- [Páginas, rutas dinámicas y middleware](https://docs.astro.build/en/guides/routing/)
+- [Componentes de Astro](https://docs.astro.build/en/basics/astro-components/)
+- [Componentes de React, Vue, Svelte u otros](https://docs.astro.build/en/guides/framework-components/)
+- [Contenido y content collections](https://docs.astro.build/en/guides/content-collections/)
+- [Estilos y Tailwind](https://docs.astro.build/en/guides/styling/)
+- [Varios idiomas](https://docs.astro.build/en/guides/internationalization/)

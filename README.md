@@ -17,40 +17,136 @@ Blog con API HTTP, basado en [05-astro-http](../05-astro-http/), con **Astro DB*
 - Blog con posts en `src/content/blog/` y transiciones de vista (`ClientRouter`, `transition:name` en imágenes del listado → detalle)
 - **Content Collections** para el blog; **Astro DB + Turso** para datos de runtime
 - Tablas `Clients` y `Posts` en `db/config.ts`; seed manual en `db/seed.dev.ts` (clientes + posts del blog con likes aleatorios)
-- API **Clients** (CRUD SSR) en `/api/clients/*`
-- API **Posts** (lectura del blog + mutaciones demo) en `/api/posts/*`
+- API **Clients** (CRUD SSR): `GET` y `POST` en `/api/clients`; `GET`, `PUT`, `PATCH` y `DELETE` en `/api/clients/:id`
+- API **Posts** (lectura del blog y mutaciones demo, sin persistencia): `GET` y `POST` en `/api/posts`; `GET`, `PUT`, `PATCH` y `DELETE` en `/api/posts/:slug`
 - API **Likes** (tabla `Posts` en Turso) en `GET /api/posts/likes/:slug` y `POST /api/posts/likes/:slug` — endpoint principal del curso para este repo
+- Referencia de endpoints en la página `/api` (`src/data/api-endpoints.ts`)
 - Colecciones Postman en `postman/` (Local y Cloudflare): **Likes**, Clients, Posts
 - Alias `@/*` en TypeScript; formateo con Prettier + `prettier-plugin-astro`
 
 ## Estructura
 
+`.astro/`, `.wrangler/`, `dist/` y `node_modules/` se generan al instalar, desarrollar o desplegar. El resto del árbol lista cada archivo del proyecto.
+
 ```text
+.
+├── .astro/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── .vscode/
+│   ├── astro-actions.code-snippets
+│   ├── astro-api.code-snippets
+│   ├── extensions.json
+│   ├── launch.json
+│   ├── settings.json
+│   └── tasks.json
+├── .wrangler/
 ├── db/
-│   ├── config.ts       # Esquema de tablas
-│   └── seed.dev.ts     # Datos iniciales (seed manual)
+│   ├── config.ts
+│   └── seed.dev.ts
+├── dist/
+├── node_modules/
 ├── patches/
-│   └── @astrojs__db@0.21.3.patch   # Fix build remoto + Cloudflare
+│   └── @astrojs__db@0.21.3.patch
+├── postman/
+│   ├── clients.postman_collection.json
+│   ├── cloudflare.postman_environment.json
+│   ├── likes.postman_collection.json
+│   ├── local.postman_environment.json
+│   └── posts.postman_collection.json
 ├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── data/
-│   ├── interfaces/
-│   ├── layouts/
-│   ├── pages/
-│   │   └── api/
-│   │       ├── clients/
-│   │       ├── likes/
-│   │       └── posts/
-│   └── styles/
-├── postman/            # Colecciones y entornos Postman
+│   ├── _headers
+│   ├── favicon.ico
+│   ├── favicon.png
+│   └── favicon.svg
 ├── scripts/
+│   └── post-prettier-style.mjs
+├── src/
+│   ├── actions/
+│   │   ├── greeting/
+│   │   │   └── get-greeting.actions.ts
+│   │   ├── posts/
+│   │   │   ├── get-post-likes.actions.ts
+│   │   │   ├── post-likes.helpers.ts
+│   │   │   └── update-likes.action.ts
+│   │   └── index.ts
+│   ├── assets/
+│   │   ├── fonts/
+│   │   │   ├── atkinson-bold.woff
+│   │   │   └── atkinson-regular.woff
+│   │   ├── blog-placeholder-1.jpg
+│   │   ├── blog-placeholder-2.jpg
+│   │   ├── blog-placeholder-3.jpg
+│   │   ├── blog-placeholder-4.jpg
+│   │   ├── blog-placeholder-5.jpg
+│   │   └── blog-placeholder-about.jpg
+│   ├── components/
+│   │   ├── likes/
+│   │   │   ├── LikeCounter.vue
+│   │   │   └── LikeCounterAction.vue
+│   │   ├── BaseHead.astro
+│   │   ├── Footer.astro
+│   │   ├── FormattedDate.astro
+│   │   ├── Header.astro
+│   │   └── HeaderLink.astro
+│   ├── content/
+│   │   └── blog/
+│   │       ├── first-post.md
+│   │       ├── markdown-style-guide.md
+│   │       ├── second-post.md
+│   │       ├── third-post.md
+│   │       └── using-mdx.mdx
+│   ├── data/
+│   │   └── api-endpoints.ts
+│   ├── interfaces/
+│   │   ├── global.d.ts
+│   │   ├── types.d.js
+│   │   └── types.ts
+│   ├── layouts/
+│   │   └── BlogPost.astro
+│   ├── lib/
+│   │   └── debounce.ts
+│   ├── pages/
+│   │   ├── api/
+│   │   │   ├── clients/
+│   │   │   │   ├── [id].ts
+│   │   │   │   ├── _helpers.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── posts/
+│   │   │   │   ├── likes/
+│   │   │   │   │   └── [slug].ts
+│   │   │   │   ├── [slug].ts
+│   │   │   │   ├── _helpers.ts
+│   │   │   │   └── index.ts
+│   │   │   └── get-person.json.ts
+│   │   ├── blog/
+│   │   │   ├── [...slug].astro
+│   │   │   └── index.astro
+│   │   ├── about.astro
+│   │   ├── api.astro
+│   │   ├── index.astro
+│   │   └── rss.xml.js
+│   ├── styles/
+│   │   └── global.css
+│   ├── consts.ts
+│   ├── content.config.ts
+│   └── env.d.ts
+├── .env
+├── .env.production
+├── .gitignore
+├── .prettierrc
+├── AGENTS.md
 ├── astro.config.mjs
-├── pnpm-workspace.yaml # patchedDependencies de @astrojs/db
-├── wrangler.jsonc
-└── package.json
+├── CLAUDE.md
+├── jsconfig.json
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── prompts.txt
+├── README.md
+├── tsconfig.json
+└── wrangler.jsonc
 ```
 
 ## Comandos
@@ -196,7 +292,7 @@ Despliegue automático en push a `master` vía GitHub Actions (`.github/workflow
 
 Lo que incluye cada deploy exitoso (estado actual del repo):
 
-- Blog estático/SSR, APIs **clients**, **posts** (contenido + **`/api/posts/likes/:slug`** en Turso)
+- Blog, APIs **clients** (`/api/clients`, `/api/clients/:id`), **posts** (`/api/posts`, `/api/posts/:slug`) y **likes** (`/api/posts/likes/:slug` en Turso)
 - Astro DB en runtime apuntando a Turso (tablas `Clients` y `Posts`)
 - Adaptador Cloudflare (imágenes, KV de sesión según config)
 
