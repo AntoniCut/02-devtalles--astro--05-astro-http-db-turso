@@ -7,20 +7,17 @@
 import type { APIRoute } from "astro";
 import { Clients, db, eq } from "astro:db";
 import {
-
-
     getClientById,
     parseClientId,
     parseClientInput,
     parseClientPatchInput,
 } from "@/src/pages/api/clients/_helpers";
 import {
-
-
     errorResponse,
     jsonResponse,
     parseJsonBody,
 } from "@/src/pages/api/posts/_helpers";
+
 
 /** - `modo ssr: el cliente se resuelve en el servidor en cada request` */
 export const prerender = false;
