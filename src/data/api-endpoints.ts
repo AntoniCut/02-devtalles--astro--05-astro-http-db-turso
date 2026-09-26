@@ -10,23 +10,23 @@ import type { ApiSection, ApiUseCase } from "@/src/interfaces/types";
 /** - `casos de uso de la api de posts` */
 export const POSTS_USE_CASES: ApiUseCase[] = [
     {
-        title: "01 — Lectura (GET estático)",
+        title: "01 — Lectura (GET SSR)",
         description:
-            "Endpoints prerenderizados en build. Puedes abrirlos directamente en el navegador.",
+            "Lectura de la colección del blog. Puedes abrir los GET en el navegador.",
         endpoints: [
             {
                 method: "GET",
-                path: "/api/posts/list",
+                path: "/api/posts",
                 title: "Listar todos los posts",
                 description: "Devuelve la colección completa del blog en JSON.",
-                mode: "static",
+                mode: "ssr",
             },
             {
                 method: "GET",
                 path: "/api/posts/:slug",
                 title: "Obtener post por slug",
                 description: "Devuelve un post concreto por su slug.",
-                mode: "static",
+                mode: "ssr",
                 relatedLinks: [
                     { label: "first-post", path: "/api/posts/first-post" },
                     { label: "second-post", path: "/api/posts/second-post" },
@@ -54,7 +54,7 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "POST",
-                path: "/api/posts/mutate",
+                path: "/api/posts",
                 title: "Crear post",
                 description:
                     "Simula la creación de un post (demo, sin persistencia).",
@@ -74,7 +74,7 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "PUT",
-                path: "/api/posts/mutations/first-post",
+                path: "/api/posts/first-post",
                 title: "Actualizar post completo (PUT)",
                 description: "Reemplaza los campos enviados en el body.",
                 mode: "ssr",
@@ -86,7 +86,7 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
             },
             {
                 method: "PATCH",
-                path: "/api/posts/mutations/first-post",
+                path: "/api/posts/first-post",
                 title: "Actualizar post parcial (PATCH)",
                 description: "Actualiza solo los campos enviados en el body.",
                 mode: "ssr",
@@ -104,7 +104,7 @@ export const POSTS_USE_CASES: ApiUseCase[] = [
         endpoints: [
             {
                 method: "DELETE",
-                path: "/api/posts/mutations/first-post",
+                path: "/api/posts/first-post",
                 title: "Eliminar post",
                 description: "No requiere body. El slug va en la URL.",
                 mode: "ssr",
@@ -271,7 +271,7 @@ export const API_SECTIONS: ApiSection[] = [
         id: "posts",
         title: "Posts",
         description:
-            "Endpoints del blog: lectura estática (content collections), mutaciones demo sin persistencia y likes en Turso bajo `/api/posts/likes/:slug`.",
+            "Endpoints del blog: lectura de content collections, mutaciones demo sin persistencia y likes en Turso bajo `/api/posts/likes/:slug`.",
         useCases: POSTS_USE_CASES,
     },
 

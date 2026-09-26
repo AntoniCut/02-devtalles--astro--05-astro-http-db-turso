@@ -25,8 +25,8 @@ Colección: `postman/clients.postman_collection.json`.
 
 Mezcla de endpoints estáticos (build) y mutaciones demo SSR:
 
-- `GET /api/posts/list`, `GET /api/posts/:slug`
-- `POST /api/posts/mutate`, mutaciones por slug bajo `/api/posts/mutations/…`
+- `GET /api/posts`, `POST /api/posts`
+- `GET|PUT|PATCH|DELETE /api/posts/:slug`
 
 Colección: `postman/posts.postman_collection.json`.
 

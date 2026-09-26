@@ -61,7 +61,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/list"
+                            "raw": "{{baseUrl}}/api/posts"
                         },
                         "description": "Devuelve la colección completa del blog en JSON."
                     },
@@ -272,7 +272,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutate"
+                            "raw": "{{baseUrl}}/api/posts"
                         },
                         "description": "Simula la creación de un post (demo, sin persistencia)."
                     },
@@ -321,7 +321,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
+                            "raw": "{{baseUrl}}/api/posts/{{postSlug}}"
                         },
                         "description": "Reemplaza los campos enviados en el body para el slug indicado."
                     },
@@ -364,7 +364,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
+                            "raw": "{{baseUrl}}/api/posts/{{postSlug}}"
                         },
                         "description": "Actualiza solo los campos enviados en el body."
                     },
@@ -408,7 +408,7 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/{{postSlug}}"
+                            "raw": "{{baseUrl}}/api/posts/{{postSlug}}"
                         },
                         "description": "Simula el borrado de un post por slug. No requiere body."
                     },
@@ -477,7 +477,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutations/no-existe"
+                            "raw": "{{baseUrl}}/api/posts/no-existe"
                         },
                         "description": "Mutación SSR: 404 JSON si el slug no está en la content collection."
                     },
@@ -517,7 +517,7 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseUrl}}/api/posts/mutate"
+                            "raw": "{{baseUrl}}/api/posts"
                         },
                         "description": "Body JSON malformado → 400 Invalid JSON body."
                     },
