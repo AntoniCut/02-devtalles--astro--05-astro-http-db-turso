@@ -109,17 +109,17 @@ export interface ClientPatchInput {
 
 
 /**
- * -----------------------------
- * -----  `ApiHttpMethod`  -----
- * -----------------------------
+ * --------------------------------------
+ * -----  type  -  `ApiHttpMethod`  -----
+ * --------------------------------------
  * - `métodos http soportados en la api`
  * */
 export type ApiHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 /**
- * -----------------------------
- * -----  `ApiRenderMode`  -----
- * -----------------------------
+ * --------------------------------------
+ * -----  type  -  `ApiRenderMode`  -----
+ * --------------------------------------
  * - `modo de renderizado de un endpoint`
  * */
 export type ApiRenderMode = "static" | "ssr";

@@ -33,7 +33,12 @@ const incrementPostLikes = async (
 
     //  -----  si el post no existe, crear la fila con cero likes  -----
     if (posts.length === 0) {
-        /** - `fila nueva para un slug que aún no está en turso` */
+        /**
+         * --------------------------
+         * -----  `newPost {}`  -----
+         * --------------------------
+         * - `fila nueva para un slug que aún no está en turso`
+         */
         const newPost = {
             id: postId,
             title: "Post not found",
@@ -75,7 +80,12 @@ export const GET: APIRoute = async ({ params }) => {
 
     //  -----  si el post no existe, devolver una fila vacía  -----
     if (posts.length === 0) {
-        /** - `respuesta cuando el slug aún no tiene fila` */
+        /**
+         * -----------------------
+         * -----  `post {}`  -----
+         * -----------------------
+         * - `respuesta cuando el slug aún no tiene fila`
+         */
         const post = {
             id: postId,
             title: "Post not found",

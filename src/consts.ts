@@ -13,7 +13,12 @@ export const SITE_TITLE = "05 - Astro HTTP DB Turso";
 /** - `descripción global del sitio` */
 export const SITE_DESCRIPTION = "Welcome to my website!";
 
-/** - `metadatos globales del sitio` */
+/**
+ * ----------------------------
+ * -----  `SITE_META {}`  -----
+ * ----------------------------
+ * - `metadatos globales del sitio`
+ */
 export const SITE_META: SiteMeta = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,

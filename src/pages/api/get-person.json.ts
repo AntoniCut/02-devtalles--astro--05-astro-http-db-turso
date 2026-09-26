@@ -21,7 +21,12 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ params, request }) => {
 
-    /** - `datos de ejemplo de una persona` */
+    /**
+     * -----------------------
+     * -----  `data {}`  -----
+     * -----------------------
+     * - `datos de ejemplo de una persona`
+     */
     const data: Person = {
         name: "John Doe",
         age: 30,

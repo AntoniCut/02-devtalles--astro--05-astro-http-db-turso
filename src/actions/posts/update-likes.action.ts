@@ -35,7 +35,12 @@ export const updateLikes = defineAction({
 
         //  -----  si el post no existe, crear la fila  -----
         if (!exists) {
-            /** - `fila nueva de post sin likes` */
+            /**
+             * --------------------------
+             * -----  `newPost {}`  -----
+             * --------------------------
+             * - `fila nueva de post sin likes`
+             */
             const newPost = {
                 id: postId,
                 title: "Post not found",

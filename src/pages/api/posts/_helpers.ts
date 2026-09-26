@@ -8,7 +8,12 @@ import type { CollectionEntry } from "astro:content";
 import { getEntry } from "astro:content";
 
 
-/** - `cabeceras json para las respuestas de la api` */
+/**
+ * -------------------------------
+ * -----  `JSON_HEADERS {}`  -----
+ * -------------------------------
+ * - `cabeceras json para las respuestas de la api`
+ */
 const JSON_HEADERS = {
     "Content-Type": "application/json",
 };

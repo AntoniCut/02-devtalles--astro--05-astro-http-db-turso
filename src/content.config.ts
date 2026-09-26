@@ -25,5 +25,10 @@ const blog = defineCollection({
         }),
 });
 
-/** - `colecciones de contenido exportadas` */
+/**
+ * ------------------------------
+ * -----  `collections {}`  -----
+ * ------------------------------
+ * - `colecciones de contenido exportadas`
+ */
 export const collections = { blog };

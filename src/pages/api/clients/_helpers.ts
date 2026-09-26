@@ -102,7 +102,12 @@ export const parseClientPatchInput = (
     body: Record<string, unknown>,
 ): ClientPatchInput | Response => {
 
-    /** - `campos válidos que se van a actualizar` */
+    /**
+     * ------------------------
+     * -----  `patch {}`  -----
+     * ------------------------
+     * - `campos válidos que se van a actualizar`
+     */
     const patch: ClientPatchInput = {};
 
     //  -----  si el body trae nombre, validarlo  -----

@@ -9,7 +9,12 @@ import { getPostLikes } from "@/src/actions/posts/get-post-likes.actions";
 import { updateLikes } from "@/src/actions/posts/update-likes.action";
 
 
-/** - `actions registradas en el servidor` */
+/**
+ * -------------------------
+ * -----  `server {}`  -----
+ * -------------------------
+ * - `actions registradas en el servidor`
+ */
 export const server = {
     getGreeting,
     getPostLikes,
