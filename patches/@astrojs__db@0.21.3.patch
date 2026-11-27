@@ -1,11 +1,36 @@
 diff --git a/dist/core/integration/index.js b/dist/core/integration/index.js
-index 2cd02f5993a25b7c3e09cdcb487bfb9f5f621892..5e3bc5d6857b99b598c96336e25e44838170f24e 100644
+index 2cd02f5..38af051 100644
 --- a/dist/core/integration/index.js
 +++ b/dist/core/integration/index.js
-@@ -193,14 +193,26 @@ async function executeSeedFile({
+@@ -117,7 +117,7 @@ function astroDBIntegration(options) {
+         });
+       },
+       "astro:server:setup": async ({ server, logger }) => {
+-        const environment = server.environments.ssr;
++        const environment = runnableEnvironment(server);
+         seedHandler.execute = async (fileUrl) => {
+           await executeSeedFile({ fileUrl, environment });
+         };
+@@ -156,7 +156,7 @@ function astroDBIntegration(options) {
+       },
+       "astro:build:setup": async ({ vite }) => {
+         tempViteServer = await getTempViteServer({ viteConfig: vite });
+-        const environment = tempViteServer.environments.ssr;
++        const environment = runnableEnvironment(tempViteServer);
+         seedHandler.execute = async (fileUrl) => {
+           await executeSeedFile({ fileUrl, environment });
+         };
+@@ -193,14 +193,33 @@ async function executeSeedFile({
      throw e;
    }
  }
++function runnableEnvironment(server) {
++  const ssr = server.environments?.ssr;
++  if (ssr?.runner) return ssr;
++  const astroEnvironment = server.environments?.astro;
++  if (astroEnvironment?.runner) return astroEnvironment;
++  return ssr;
++}
 +function filterPluginsForTempServer(plugins) {
 +  return (plugins ?? []).flat().filter((plugin) => {
 +    if (plugin && typeof plugin === "object" && "name" in plugin && typeof plugin.name === "string") {

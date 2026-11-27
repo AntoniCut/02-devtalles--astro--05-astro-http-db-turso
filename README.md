@@ -246,9 +246,11 @@ pnpm deploy
 
 ### Seed manual (Astro 6.4)
 
-`@astrojs/db` está deprecado en Astro 6.4. Si existe un archivo `db/seed.ts`, Astro DB intenta ejecutarlo al arrancar `pnpm dev` y falla por incompatibilidad con Vite 7.
+`@astrojs/db` está deprecado en Astro 6.4. Si existe `db/seed.ts`, Astro DB lo ejecuta al arrancar el dev server local.
 
-**Solución adoptada en este proyecto:** el seed vive en `db/seed.dev.ts` y se ejecuta manualmente con `pnpm db:seed`. No renombres ese archivo a `seed.ts`.
+Con el adapter de Cloudflare, `server.environments.ssr` no tiene `runner` y ese arranque revienta: `Cannot read properties of undefined (reading 'import')`. El parche usa `environments.astro` cuando falta ese runner. En Node, sin el adapter, `db/seed.ts` ya arrancaba.
+
+**Solución adoptada en este proyecto:** el seed de datos sigue en `db/seed.dev.ts` y se ejecuta a mano con `pnpm db:seed`. Un `db/seed.ts` se correría en cada arranque local, volvería a crear las tablas y perdería los likes aleatorios.
 
 Documentación de referencia (Astro 5): https://v5.docs.astro.build/en/guides/astro-db/
 
@@ -256,7 +258,10 @@ Documentación de referencia (Astro 5): https://v5.docs.astro.build/en/guides/as
 
 `astro build --remote` falla con `@astrojs/cloudflare` en `@astrojs/db@0.21.3` con el error `Invalid URL string` ([issue #16738](https://github.com/withastro/astro/issues/16738)). No es un problema de credenciales: `db push --remote` puede funcionar mientras el build remoto falla.
 
-Este proyecto aplica el fix oficial ([PR #16939](https://github.com/withastro/astro/pull/16939)) mediante `pnpm patch`:
+Este proyecto aplica dos arreglos con `pnpm patch`:
+
+- El fix oficial de `Invalid URL string` ([PR #16939](https://github.com/withastro/astro/pull/16939)): el servidor temporal de Vite del build no carga los plugins `vite-plugin-cloudflare`.
+- El seed usa el environment de Vite que tiene `runner`. Con Cloudflare es `environments.astro`, porque `environments.ssr.runner` es `undefined`.
 
 - `patches/@astrojs__db@0.21.3.patch`
 - `pnpm-workspace.yaml` → `patchedDependencies`

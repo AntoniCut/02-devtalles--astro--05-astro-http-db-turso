@@ -24,11 +24,13 @@ El worker de Cloudflare no abre URLs `file:`. `pnpm dev:local` omite el adapter 
 - **Base de datos:** libSQL / Turso vía Astro DB
 - **Esquema:** `db/config.ts`
 - **Seed:** `db/seed.dev.ts`, a mano con `pnpm db:seed` o `pnpm db:seed:local`
-- **Parche:** `patches/@astrojs__db@0.21.3.patch`, necesario para `build:remote` con Cloudflare
+- **Parche:** `patches/@astrojs__db@0.21.3.patch`, necesario para `build:remote` con Cloudflare y para que `db/seed.ts` no reviente cuando `ssr.runner` no existe
 
 ### Seed de Astro DB
 
-El seed vive solo en `db/seed.dev.ts`. Un archivo `db/seed.ts` hace que Astro DB lo ejecute al arrancar `dev` y falle en Astro 6.4 (`environment.runner` es `undefined`).
+El seed de datos vive en `db/seed.dev.ts` y se corre a mano. Así el arranque local no vuelve a crear las tablas ni resetea los likes.
+
+`db/seed.ts` sí lo ejecuta Astro DB al arrancar un dev local. Con el adapter de Cloudflare, `server.environments.ssr.runner` es `undefined` y eso revienta en `runner.import`. El parche elige `environments.astro` en ese caso. Sin el adapter (Node), `ssr.runner` existe y el seed arranca igual.
 
 ### Scripts de base de datos
 
@@ -72,7 +74,10 @@ Estas variables van sin el prefijo `PUBLIC_`.
 
 `astro build --remote` falla con `@astrojs/db@0.21.3` y `@astrojs/cloudflare` (`Invalid URL string`, [#16738](https://github.com/withastro/astro/issues/16738)). `db push --remote` puede funcionar igual: el fallo es del build, y las credenciales pueden estar bien.
 
-Este repo aplica el arreglo de [#16939](https://github.com/withastro/astro/pull/16939) con `pnpm patch`:
+Este repo aplica dos arreglos con `pnpm patch`:
+
+- [#16939](https://github.com/withastro/astro/pull/16939): el servidor temporal de Vite del build no carga los plugins `vite-plugin-cloudflare` (`Invalid URL string`).
+- Si `environments.ssr.runner` no existe, el seed importa desde `environments.astro`.
 
 - Parche: `patches/@astrojs__db@0.21.3.patch`
 - Configuración: `pnpm-workspace.yaml` → `patchedDependencies`
